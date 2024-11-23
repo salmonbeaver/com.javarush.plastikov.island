@@ -4,8 +4,8 @@ import data.Animals;
 
 public abstract class Herbivore extends Animal{
 
-    protected Herbivore(Animals name, String picture) {
-        super(name, picture);
+    protected Herbivore(Class<? extends Animal> name) {
+        super(name);
     }
 
     @Override

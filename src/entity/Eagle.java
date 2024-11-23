@@ -4,9 +4,9 @@ import data.Animals;
 
 public class Eagle extends Predator {
 
-    public static final String PICTURE = "\uD83E\uDD85"; // 🦅
+    private static final int ID = 7;
 
     public Eagle () {
-        super(Animals.EAGLE, PICTURE);
+        super(Eagle.class);
     }
 }

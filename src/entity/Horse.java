@@ -5,9 +5,9 @@ import interfaces.Eatable;
 
 public class Horse extends Herbivore implements Eatable {
 
-    public static final String PICTURE = "\uD83D\uDC0E"; // 🐎
+    private static final int ID = 10;
 
     public Horse () {
-        super(Animals.HORSE, PICTURE);
+        super(Horse.class);
     }
 }
