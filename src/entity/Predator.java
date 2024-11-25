@@ -1,15 +1,14 @@
 package entity;
 
-import data.Animals;
-
 public abstract class Predator extends Animal {
 
-    protected Predator(Class<? extends Animal> name) {
-        super(name);
+    protected Predator(int id) {
+        super(id);
     }
 
     @Override
-    public void eat(Animals animal){
+    public int eat(){
         System.out.println("Затычка для предаторов");
+        return 0;
     }
 }

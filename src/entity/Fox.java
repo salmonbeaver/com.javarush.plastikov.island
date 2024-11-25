@@ -8,6 +8,11 @@ public class Fox extends Predator implements Eatable {
     private static final int ID = 8;
 
     public Fox () {
-        super(Fox.class);
+        super(ID);
     }
+
+    public static int getId() {
+        return ID;
+    }
+
 }

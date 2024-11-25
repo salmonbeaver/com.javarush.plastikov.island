@@ -7,6 +7,11 @@ public class Bear extends Predator {
     private static final int ID = 1;
 
     public Bear () {
-        super(Bear.class);
+        super(ID);
     }
+
+    public static int getId() {
+        return ID;
+    }
+
 }

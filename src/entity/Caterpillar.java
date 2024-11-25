@@ -8,6 +8,11 @@ public class Caterpillar extends Herbivore implements Eatable {
     private static final int ID = 4;
 
     public Caterpillar () {
-        super(Caterpillar.class);
+        super(ID);
     }
+
+    public static int getId() {
+        return ID;
+    }
+
 }

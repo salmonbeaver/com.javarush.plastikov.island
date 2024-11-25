@@ -8,6 +8,11 @@ public class Deer extends Herbivore implements Eatable {
     private static final int ID = 5;
 
     public Deer () {
-        super(Deer.class);
+        super(ID);
     }
+
+    public static int getId() {
+        return ID;
+    }
+
 }

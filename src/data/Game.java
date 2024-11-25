@@ -2,26 +2,39 @@ package data;
 
 import entity.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Game {
 
-    public static final List<Integer> allIDList = List.of(Bear.getId(), Boar.getId(), Buffalo.getId()
-            , Caterpillar.getId(), Deer.getId(), Duck.getId(), Eagle.getId()
-            , Fox.getId(), Goat.getId(), Horse.getId(), Mouse.getId(), Rabbit.getId()
-            , Sheep.getId(), Snake.getId(), Wolf.getId());
+    public static final Map<Integer, Class<? extends Animal>> matchID = new HashMap<>();
     protected static final Map<Integer, Double> weightMap = new HashMap<>(); // Коллекция весов
     protected static final Map<Integer, Integer> speedMap = new HashMap<>(); // Коллекция скоростей
     protected static final Map<Integer, Double> maxSatietyMap = new HashMap<>(); // Коллекция макс сытостей
     protected static Map<Integer, Double> actualSatietyMap = new HashMap<>(); // Коллекция актуальных сытостей
-    protected static Map<Integer, Map<Integer, Integer>> foodPoolMap = new HashMap<>(); // Коллекция кто кого ест
-    protected static Map<Integer, String> picturesMap = new HashMap<>(); // Коллекция эмодзи
-    protected static Map<Class<? extends Animal>, Integer> oneCellCapacityMap = new HashMap<>(); // Коллекция вместимостей в одной клетке
+    protected static final Map<Integer, Map<Integer, Integer>> foodPoolMap = new HashMap<>(); // Коллекция кто кого ест
+    protected static final Map<Integer, String> picturesMap = new HashMap<>(); // Коллекция эмодзи
+    protected static final Map<Integer, Integer> oneCellCapacityMap = new HashMap<>(); // Коллекция вместимостей в одной клетке
 
     public static void init() {
+
+        matchID.put(Bear.getId(), Bear.class);
+        matchID.put(Boar.getId(), Boar.class);
+        matchID.put(Buffalo.getId(), Buffalo.class);
+        matchID.put(Caterpillar.getId(), Caterpillar.class);
+        matchID.put(Deer.getId(), Deer.class);
+        matchID.put(Duck.getId(), Duck.class);
+        matchID.put(Eagle.getId(), Eagle.class);
+        matchID.put(Fox.getId(), Fox.class);
+        matchID.put(Goat.getId(), Goat.class);
+        matchID.put(Horse.getId(), Horse.class);
+        matchID.put(Mouse.getId(), Mouse.class);
+        matchID.put(Rabbit.getId(), Rabbit.class);
+        matchID.put(Sheep.getId(), Sheep.class);
+        matchID.put(Snake.getId(), Snake.class);
+        matchID.put(Wolf.getId(), Wolf.class);
+//        matchID.put(Plant.getId(), Plant.class);
+
         weightMap.put(Bear.getId(), 500.0);
         weightMap.put(Boar.getId(), 400.0);
         weightMap.put(Buffalo.getId(), 700.0);
@@ -87,7 +100,8 @@ public class Game {
         actualSatietyMap.put(Wolf.getId(), maxSatietyMap.get(Wolf.getId()));
 
 
-        foodPoolMap.put(Bear.getId(), Map.of(Snake.getId(), 80
+        foodPoolMap.put(Bear.getId(), Map.of(
+                Snake.getId(), 80
                 , Horse.getId(), 40
                 , Deer.getId(), 80
                 , Rabbit.getId(), 80
@@ -97,34 +111,48 @@ public class Game {
                 , Boar.getId(), 50
                 , Buffalo.getId(), 20
                 , Duck.getId(), 10));
-        foodPoolMap.put(Boar.getId(), Map.of(Plant.getId(), 100
+        foodPoolMap.put(Boar.getId(), Map.of(
+                Plant.getId(), 100
                 , Mouse.getId(), 90
                 , Caterpillar.getId(), 90));
-        foodPoolMap.put(Buffalo.getId(), Map.of(Plant.getId(), 100));
-        foodPoolMap.put(Caterpillar.getId(), Map.of(Plant.getId(), 100));
-        foodPoolMap.put(Deer.getId(), Map.of(Plant.getId(), 100));
-        foodPoolMap.put(Duck.getId(), Map.of(Plant.getId(), 100
+        foodPoolMap.put(Buffalo.getId(), Map.of(
+                Plant.getId(), 100));
+        foodPoolMap.put(Caterpillar.getId(), Map.of(
+                Plant.getId(), 100));
+        foodPoolMap.put(Deer.getId()
+                , Map.of(Plant.getId(), 100));
+        foodPoolMap.put(Duck.getId(), Map.of(
+                Plant.getId(), 100
                 , Caterpillar.getId(), 90));
-        foodPoolMap.put(Eagle.getId(), Map.of(Fox.getId(), 10
+        foodPoolMap.put(Eagle.getId(), Map.of(
+                Fox.getId(), 10
                 , Rabbit.getId(), 90
                 , Mouse.getId(), 90
                 , Duck.getId(), 80));
-        foodPoolMap.put(Fox.getId(), Map.of(Rabbit.getId(), 70
+        foodPoolMap.put(Fox.getId(), Map.of(
+                Rabbit.getId(), 70
                 , Mouse.getId(), 90
                 , Duck.getId(), 60
                 , Caterpillar.getId(), 40));
-        foodPoolMap.put(Goat.getId(), Map.of(Plant.getId(), 100));
-        foodPoolMap.put(Horse.getId(), Map.of(Plant.getId(), 100));
-        foodPoolMap.put(Mouse.getId(), Map.of(Plant.getId(), 100
+        foodPoolMap.put(Goat.getId(), Map.of(
+                Plant.getId(), 100));
+        foodPoolMap.put(Horse.getId(), Map.of(
+                Plant.getId(), 100));
+        foodPoolMap.put(Mouse.getId(), Map.of(
+                Plant.getId(), 100
                 , Mouse.getId(), 90
                 , Caterpillar.getId(), 90));
-        foodPoolMap.put(Rabbit.getId(), Map.of(Plant.getId(), 100));
-        foodPoolMap.put(Sheep.getId(), Map.of(Plant.getId(), 100));
-        foodPoolMap.put(Snake.getId(), Map.of(Fox.getId(), 15
+        foodPoolMap.put(Rabbit.getId(), Map.of(
+                Plant.getId(), 100));
+        foodPoolMap.put(Sheep.getId(), Map.of(
+                Plant.getId(), 100));
+        foodPoolMap.put(Snake.getId(), Map.of(
+                Fox.getId(), 15
                 , Rabbit.getId(), 20
                 , Mouse.getId(), 40
                 , Duck.getId(), 40));
-        foodPoolMap.put(Wolf.getId(), Map.of(Horse.getId(), 10
+        foodPoolMap.put(Wolf.getId(), Map.of(
+                Horse.getId(), 10
                 , Deer.getId(), 15
                 , Rabbit.getId(), 60
                 , Mouse.getId(), 80
@@ -151,21 +179,22 @@ public class Game {
         picturesMap.put(Wolf.getId(), "\uD83D\uDC3A"); // 🐺
         picturesMap.put(Plant.getId(), "\uD83C\uDF3F"); // 🌿
 
-        oneCellCapacityMap.put(Bear.class, 5);
-        oneCellCapacityMap.put(Boar.class, 50);
-        oneCellCapacityMap.put(Buffalo.class, 10);
-        oneCellCapacityMap.put(Caterpillar.class, 1000);
-        oneCellCapacityMap.put(Deer.class, 20);
-        oneCellCapacityMap.put(Duck.class, 200);
-        oneCellCapacityMap.put(Eagle.class, 20);
-        oneCellCapacityMap.put(Fox.class, 30);
-        oneCellCapacityMap.put(Goat.class, 140);
-        oneCellCapacityMap.put(Horse.class, 20);
-        oneCellCapacityMap.put(Mouse.class, 500);
-        oneCellCapacityMap.put(Rabbit.class, 150);
-        oneCellCapacityMap.put(Sheep.class, 140);
-        oneCellCapacityMap.put(Snake.class, 30);
-        oneCellCapacityMap.put(Wolf.class, 30);
+        oneCellCapacityMap.put(Bear.getId(), 5);
+        oneCellCapacityMap.put(Boar.getId(), 50);
+        oneCellCapacityMap.put(Buffalo.getId(), 10);
+        oneCellCapacityMap.put(Caterpillar.getId(), 1000);
+        oneCellCapacityMap.put(Deer.getId(), 20);
+        oneCellCapacityMap.put(Duck.getId(), 200);
+        oneCellCapacityMap.put(Eagle.getId(), 20);
+        oneCellCapacityMap.put(Fox.getId(), 30);
+        oneCellCapacityMap.put(Goat.getId(), 140);
+        oneCellCapacityMap.put(Horse.getId(), 20);
+        oneCellCapacityMap.put(Mouse.getId(), 500);
+        oneCellCapacityMap.put(Rabbit.getId(), 150);
+        oneCellCapacityMap.put(Sheep.getId(), 140);
+        oneCellCapacityMap.put(Snake.getId(), 30);
+        oneCellCapacityMap.put(Wolf.getId(), 30);
+
     }
 
     public static double getWeight(int id) {
@@ -206,7 +235,7 @@ public class Game {
     }
 
     // CapacityMap methods
-    public static Map<Class<? extends Animal>, Integer> getOneCellCapacityMap() {
+    public static Map<Integer, Integer> getOneCellCapacityMap() {
         return oneCellCapacityMap;
     }
 
@@ -214,13 +243,19 @@ public class Game {
         return oneCellCapacityMap.get(animal);
     }
 
-    public static int getOneCellCapacity() {
-        int generalCapacity = 0;
+    // Максимальная вместимость 1 клетки
+    public static int getOneCellMaxCapacity() {
+        int animalCapacity = 0;
+        int plantCapacity = Plant.getCapacity();
 
-        for (Map.Entry<Class<? extends Animal>, Integer> entry : oneCellCapacityMap.entrySet()) {
-            generalCapacity += entry.getValue();
+        for (Map.Entry<Integer, Integer> entry : oneCellCapacityMap.entrySet()) {
+            animalCapacity += entry.getValue();
         }
-        return generalCapacity;
+        return animalCapacity + plantCapacity;
+    }
+
+    public static Class<? extends Animal> getClassByID(int id) {
+        return matchID.get(id);
     }
 
 

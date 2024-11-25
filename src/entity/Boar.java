@@ -8,6 +8,11 @@ public class Boar extends Herbivore implements Eatable {
     private static final int ID = 2;
 
     public Boar () {
-        super(Boar.class);
+        super(ID);
     }
+
+    public static int getId() {
+        return ID;
+    }
+
 }

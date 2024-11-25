@@ -1,23 +1,21 @@
 package entity;
 
 import data.*;
-import interfaces.Eatable;
 
 import java.util.*;
 
 public abstract class Animal {
 
-    private static int ID;
-    private String name;
-    private String picture;
-    private double weight;
-    private int speed;
-    private double maxSatiety;
-    private double actualSatiety;
-    private Map<Integer, Integer> foodPool;
+    private static final Random random = new Random();
 
-    protected Animal(int id) {
-        ID = id;
+    private static String picture;
+    private static double weight;
+    private static int speed;
+    public static double maxSatiety;
+    private double actualSatiety;
+    public static Map<Integer, Integer> foodPool;
+
+    protected Animal(Integer id) {
         picture = Game.getPicture(id);
         weight = Game.getWeight(id);
         speed = Game.getSpeed(id);
@@ -27,14 +25,21 @@ public abstract class Animal {
     }
 
     public int eat() {
-        List<Integer> values = new ArrayList<>(foodPool.values());
-        Random random = new Random();
-        int numberThatWillBeEaten = random.nextInt(values.size());
-        boolean isEaten = random.nextInt() < values.get(numberThatWillBeEaten);
+
+        if (actualSatiety >= maxSatiety * 0.5) {
+            return 0;
+        }
+
+        List<Integer> foodIDList = new ArrayList<>(foodPool.keySet()); // упорядоченные значения id еды
+        int numberThatWillBeEaten = random.nextInt(foodIDList.size()); // случайный номер еды из пула доступной еды
+        int foodID = foodIDList.get(numberThatWillBeEaten); // выбранный слуайный ID еды
+        int chance = foodPool.get(foodID); // шанс соответсвующий этому ID
+        boolean isEaten = random.nextInt(100) < chance; // проверяем, можем ли съесть еду
 
         if(isEaten) {
-            return 0; // тут закончил
+            return foodID;
         }
+        return 0;
     }
 
     public void move(String speed) {
@@ -49,19 +54,11 @@ public abstract class Animal {
     public void chooseDirection() {
     }
 
-    public static int getId() {
-        return ID;
-    }
-
     public Animal getAnimal(int id) {
         return null;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getPicture() {
+    public static String getPicture() {
         return picture;
     }
 
@@ -83,5 +80,9 @@ public abstract class Animal {
 
     public void setActualSatiety(Double actualSatiety) {
         this.actualSatiety = actualSatiety;
+    }
+
+    public Map<Integer, Integer> getFoodPool() {
+        return foodPool;
     }
 }

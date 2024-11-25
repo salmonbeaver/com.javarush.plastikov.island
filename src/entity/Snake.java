@@ -8,6 +8,11 @@ public class Snake extends Predator implements Eatable {
     private static final int ID = 14;
 
     public Snake () {
-        super(Snake.class);
+        super(ID);
     }
+
+    public static int getId() {
+        return ID;
+    }
+
 }

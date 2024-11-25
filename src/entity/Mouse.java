@@ -8,6 +8,11 @@ public class Mouse extends Herbivore implements Eatable {
     private static final int ID = 11;
 
     public Mouse () {
-        super(Mouse.class);
+        super(ID);
     }
+
+    public static int getId() {
+        return ID;
+    }
+
 }

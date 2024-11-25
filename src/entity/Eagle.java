@@ -7,6 +7,11 @@ public class Eagle extends Predator {
     private static final int ID = 7;
 
     public Eagle () {
-        super(Eagle.class);
+        super(ID);
     }
+
+    public static int getId() {
+        return ID;
+    }
+
 }

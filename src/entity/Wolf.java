@@ -7,6 +7,11 @@ public class Wolf extends Predator {
     private static final int ID = 15;
 
     public Wolf () {
-        super(Wolf.class);
+        super(ID);
     }
+
+    public static int getId() {
+        return ID;
+    }
+
 }
