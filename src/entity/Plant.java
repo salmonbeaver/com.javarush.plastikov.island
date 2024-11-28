@@ -1,8 +1,6 @@
 package entity;
 
-import interfaces.Eatable;
-
-public class Plant implements Eatable {
+public class Plant{
 
     private double weight = 1;
     private static final int ID = 16;

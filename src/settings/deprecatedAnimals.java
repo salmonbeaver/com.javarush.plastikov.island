@@ -1,4 +1,4 @@
-package data;
+package settings;
 
 public final class deprecatedAnimals {
     public static final String BEAR = "Bear";

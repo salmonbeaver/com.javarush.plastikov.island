@@ -1,4 +1,4 @@
-package data;
+package settings;
 
 public enum Animals {
     BEAR,

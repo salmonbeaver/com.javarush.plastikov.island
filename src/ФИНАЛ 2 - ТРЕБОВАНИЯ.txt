@@ -37,10 +37,10 @@
 ✅	Herbivores (Травоядные)
 ✅	Predators (Хищники)
 
-⭕Island (Остров)
-⭕Location (Локация) / Cell (Клетка)
+⭕entity.Island (Остров)
+⭕Location (Локация) / entity.Cell (Клетка)
 
-✅? data.Game
+✅? data.Data
 xml / json / yaml - как их читать в Java
 Может быть вероятности съедания можно хранить в настройках
 
