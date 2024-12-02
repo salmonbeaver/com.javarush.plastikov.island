@@ -1,11 +1,23 @@
 package entity.herbivore;
 
+import lombok.Getter;
+import java.util.Map;
+
+@Getter
 public class Deer extends Herbivore{
 
-    private static final int initID = 5;
+    @Getter
+    private static final int ID = 4;
+    private String picture;
+    private double weight;
+    private int speed;
+    private double maxSatiety;
+    private double actualSatiety;
+    private Map<Integer, Integer> foodPool;
+    private int cellNumber;
 
     public Deer () {
-        super(initID);
+        super(ID);
     }
 
 }

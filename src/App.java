@@ -1,20 +1,23 @@
 
-import entity.herbivore.Boar;
+import entity.herbivore.Deer;
 import entity.predator.Bear;
 import settings.Data;
 import entity.*;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 
 public class App {
     public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Data.init();
-        System.out.println(Bear.getId());
+        Island.init();
+        Cell cell = Island.getCell(0);
+        Animal deer = new Deer();
+        System.out.println(Deer.getID());
+
 //
 //        Cell cell = new Cell();
 //
-////        cell.populate();
+//        cell.populate();
 //
 //        int i = 0;
 //

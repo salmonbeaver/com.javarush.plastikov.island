@@ -10,7 +10,7 @@ public class Island {
     private static final int FIELD_SIZE = WIDTH * HEIGHT;
     private static final List<Cell> CELL_LIST = new ArrayList<>(FIELD_SIZE);
 
-    public void init() throws InstantiationException, IllegalAccessException {
+    public static void init() throws InstantiationException, IllegalAccessException {
         for (int i = 0; i < FIELD_SIZE; i++) {
             Cell cell = new Cell();
             cell.populate();

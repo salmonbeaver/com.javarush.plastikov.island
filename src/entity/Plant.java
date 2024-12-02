@@ -1,22 +1,13 @@
 package entity;
 
-public class Plant{
+import lombok.Getter;
+@Getter
+public class Plant {
 
-    private double weight = 1;
+    @Getter
     private static final int ID = 16;
+    @Getter
     private static int capacity = 200;
+    private double weight = 1;
 
-    public Plant() {}
-
-    public double getWeight() {
-        return weight;
-    }
-
-    public static int getId() {
-        return ID;
-    }
-
-    public static int getCapacity() {
-        return capacity;
-    }
 }

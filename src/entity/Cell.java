@@ -11,16 +11,17 @@ public class Cell {
     private final int ID;
     private static final int MAX_ANIMAL_CAPACITY = Data.getOneCellMaxCapacity();
     private static final int MAX_PLANT_CAPACITY = Plant.getCapacity();
-    private static final Map<Integer, Integer> SPECIFIC_ANIMAL_CAPACITY_MAP = Data.getOneCellCapacityMap();
-    public List<Animal> populationList = new ArrayList<>(MAX_ANIMAL_CAPACITY);
-    public List<Plant> plantList = new ArrayList<>(MAX_PLANT_CAPACITY);
-
-    public Map <Animal, Integer> animalCountMap = new HashMap<>();
+    private static final Map<Integer, Integer> SPECIFIC_ANIMAL_CAPACITY_MAP = Data.getOneCellCapacityMap(); // ID животного : макс число в клетке
+    public final List<Animal> populationList = new ArrayList<>(MAX_ANIMAL_CAPACITY);
+    public final List<Plant> plantList = new ArrayList<>(MAX_PLANT_CAPACITY);
+    private static final Map <Animal, Integer> animalCountMap = new HashMap<>(); // Животное : кол-во в клетке
 
     public Cell() {
         ID = cellCount++;
+        fillByPlant();
     }
 
+    // Стартовое заполнение клетки (мапы) животными
     public void populate() throws InstantiationException, IllegalAccessException {
 
         for (Map.Entry<Integer, Integer> entry : SPECIFIC_ANIMAL_CAPACITY_MAP.entrySet()) {
@@ -37,28 +38,44 @@ public class Cell {
             }
 
             // Количество животных каждого типа
-            animalCountMap.put(currentAnimalType.newInstance(), countOfOneType); //
-
-            int numberOfPlants = RANDOM.nextInt(Plant.getCapacity()) + 1;
-
-            // Заполнение листа растениями
-            for (int i = 0; i < numberOfPlants; i++) {
-                plantList.add(new Plant());
-            }
+            animalCountMap.put(currentAnimalType.newInstance(), countOfOneType);
         }
 
-    }
-
-    public void live() {
-        while (true) {
-            for (Animal animal : populationList) {
-                animal.eat();
-            }
-        }
     }
 
     public Cell getCell() {
         return null;
     }
 
+    public List<Animal> getAnimals (){
+        List<Animal> animals = new ArrayList<>();
+
+        for (Map.Entry<Animal, Integer> entry : animalCountMap.entrySet()) {
+            animals.add(entry.getKey());
+        }
+
+        return animals;
+    }
+
+    public int getAnimalCapacity(int id) {
+        return SPECIFIC_ANIMAL_CAPACITY_MAP.get(id);
+    }
+
+    // Стартовое заполнение листа растениями
+    private void fillByPlant() {
+
+        int numberOfPlants = RANDOM.nextInt(Plant.getCapacity()) + 1;
+        for (int i = 0; i < numberOfPlants; i++) {
+            plantList.add(new Plant());
+        }
+
+    }
+
+//    @Override
+//    public void run() {
+//
+//        for (Animal animal : populationList) {
+//            animal.eat();
+//        }
+//    }
 }

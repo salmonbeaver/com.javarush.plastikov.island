@@ -1,21 +1,25 @@
 package entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import settings.*;
 
+import java.lang.reflect.Field;
 import java.util.*;
-
+@Getter
+@Setter
 public abstract class Animal {
 
     private static final Random random = new Random();
-
-    private static int ID;
-    private static String picture;
-    private static double weight;
-    private static int speed;
-    private static double maxSatiety;
+    @Getter
+    private int ID;
+    private String picture;
+    private double weight;
+    private int speed;
+    private double maxSatiety;
     private double actualSatiety;
-    private static Map<Integer, Integer> foodPool;
-    private int cellNumber = -1;
+    private Map<Integer, Integer> foodPool;
+    private int cellNumber;
 
     protected Animal(int id) {
         ID = id;
@@ -23,10 +27,11 @@ public abstract class Animal {
         weight = Data.getWeight(id);
         speed = Data.getSpeed(id);
         maxSatiety = Data.getMaxSatiety(id);
-        actualSatiety = maxSatiety;
+        actualSatiety = maxSatiety * 0.1;
         foodPool = Data.getFoodPool(id);
     }
 
+    // не работает
     public boolean eat() {
 
         if (actualSatiety >= maxSatiety * 0.5) {
@@ -49,7 +54,7 @@ public abstract class Animal {
             List<Animal> populationList = Island.getCell(cellNumber).populationList;
 
             for (Animal animal : populationList) {
-                if (animal.getId() == foodID) {
+                if (getID() == foodID) {
                     populationList.remove(animal);
                     if (actualSatiety + animal.getWeight() <= maxSatiety) { // если вес скушанного больше веса едока, то сытость = макс
                         actualSatiety += animal.getWeight();
@@ -67,27 +72,22 @@ public abstract class Animal {
         return false;
     }
 
-    private Map<Integer, Integer> getActualFoodPool() {
-        Map<Integer, Integer> actualFoodPool = new HashMap<>();
-
-        // Делаем выборку доступной еды из находящихся на клетке живности
-        for (Map.Entry<Integer, Integer> entry : foodPool.entrySet()) {
-            List<Animal> populationList = Island.getCell(cellNumber).populationList;
-
-            for (Animal animal : populationList) {
-                if (animal.getId() == entry.getKey()) {
-                    actualFoodPool.put(entry.getKey(), entry.getValue());
-                }
-            }
-        }
-        return actualFoodPool;
-    }
-
     public void move() {
+
     }
 
-    public void reproduce() {
-    }
+//    public void reproduce() {
+//
+//        Cell cell = Island.getCell(cellNumber);
+//        List<Animal> newPopulation
+//        for (Animal animal : cell.populationList) {
+//            int check = getIDByReflection(animal);
+//
+//            if (check == getID()) {
+//
+//            }
+//        }
+//    }
 
     public void die() {
     }
@@ -95,43 +95,43 @@ public abstract class Animal {
     public void chooseDirection() {
     }
 
-    public Animal getAnimal(int id) {
-        return null;
+    private Map<Integer, Integer> getActualFoodPool() {
+        Map<Integer, Integer> actualFoodPool = new HashMap<>();
+        List<Animal> populationList = Island.getCell(cellNumber).getAnimals();
+
+        // Делаем выборку доступной еды из находящихся на клетке живности
+        for (Map.Entry<Integer, Integer> entry : foodPool.entrySet()) {
+
+            for (Animal animal : populationList) {
+                int check = getIDByReflection(animal);
+
+                if (check == entry.getKey()) {
+                    actualFoodPool.put(entry.getKey(), entry.getValue());
+                }
+
+                // Все животные из пула еды в клетке
+                if(foodPool.size() == actualFoodPool.size()) {
+                    return actualFoodPool;
+                }
+            }
+        }
+
+        System.out.println(actualFoodPool.size());
+
+        return actualFoodPool;
     }
 
-    public static String getPicture() {
-        return picture;
-    }
+    private int getIDByReflection(Animal animal) {
+        int check = -1;
 
-    public double getWeight() {
-        return weight;
-    }
+        try {
+            Field fieldID = animal.getClass().getDeclaredField("ID");
+            fieldID.setAccessible(true);
+            check = (int) fieldID.get(ID);
+        } catch (Exception e) {
+            System.out.println("Вы что-нибудь видели? И я нет -_-");
+        }
 
-    public int getSpeed() {
-        return speed;
-    }
-
-    public double getMaxSatiety() {
-        return maxSatiety;
-    }
-
-    public double getActualSatiety() {
-        return actualSatiety;
-    }
-
-    public void setActualSatiety(Double actualSatiety) {
-        this.actualSatiety = actualSatiety;
-    }
-
-    public void setCellNumber(int i) {
-        cellNumber = i;
-    }
-
-    public Map<Integer, Integer> getFoodPool() {
-        return foodPool;
-    }
-
-    public static int getId() {
-        return ID;
+        return check;
     }
 }
