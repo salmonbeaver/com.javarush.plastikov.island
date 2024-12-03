@@ -5,14 +5,32 @@ import settings.Data;
 import entity.*;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Iterator;
 
 public class App {
     public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Data.init();
         Island.init();
         Cell cell = Island.getCell(0);
-        Animal deer = new Deer();
-        System.out.println(Deer.getID());
+
+        System.out.println(cell.populationList.size());
+        System.out.println(cell.populationList.getFirst().eat());
+
+
+        Iterator iterator = cell.populationList.iterator();
+
+        while (iterator.hasNext()) {
+            Animal animal = (Animal) iterator.next();
+
+            if (animal.eat()) {
+                iterator.remove();
+            }
+        }
+
+        System.out.println(cell.populationList.size());
+
+
+
 
 //
 //        Cell cell = new Cell();
