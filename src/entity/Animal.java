@@ -84,7 +84,8 @@ public abstract class Animal {
 
     }
 
-    public void reproduce() {
+    public boolean reproduce() {
+        boolean isReproduce = false;
         Cell cell = Island.getCell(cellID);
         List<Animal> oldPopulation = cell.populationList;
         List<Animal> newPopulation = new ArrayList<>(cell.populationList);
@@ -92,21 +93,19 @@ public abstract class Animal {
         for (Animal animal : oldPopulation) {
 
             if (ID == getIDByReflection(animal)) {
-                Class<? extends Animal> currentAnimalType = animal.getClass();
-                newPopulation.add(createAnimalByReflection(currentAnimalType));
-            }
 
+                if (!cell.isCrowded(newPopulation, animal)) {
+                    Class<? extends Animal> currentAnimalType = animal.getClass();
+                    newPopulation.add(createAnimalByReflection(currentAnimalType));
+                    System.out.println(picture + " have it with " + animal.picture);
+                    isReproduce = true;
+                }
+            }
         }
 
-//        while (iterator.hasNext()) {
-//            Animal animal = iterator.next();
-//
-//            if (ID == getIDByReflection(animal)) {
-//                Class<? extends Animal> currentAnimalType = iterator.next().getClass();
-//                iterator.add(createAnimalByReflection(currentAnimalType));
-//            }
-//        }
+        cell.refreshPopulation(newPopulation);
 
+        return isReproduce;
     }
 
     public void die() {

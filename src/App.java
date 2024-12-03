@@ -12,20 +12,23 @@ public class App {
         Data.init();
         Island.init();
         Cell cell = Island.getCell(0);
+        Animal test = cell.populationList.getFirst();
 
         System.out.println(cell.populationList.size());
-        System.out.println(cell.populationList.getFirst().eat());
+//        System.out.println(test.eat());
+        System.out.println(test.reproduce());
+
+//        Iterator iterator = cell.populationList.iterator();
+//
+//        while (iterator.hasNext()) {
+//            Animal animal = (Animal) iterator.next();
+//
+//            if (animal.eat()) {
+//                iterator.remove();
+//            }
+//        }
 
 
-        Iterator iterator = cell.populationList.iterator();
-
-        while (iterator.hasNext()) {
-            Animal animal = (Animal) iterator.next();
-
-            if (animal.eat()) {
-                iterator.remove();
-            }
-        }
 
         System.out.println(cell.populationList.size());
 

@@ -12,7 +12,7 @@ public class Cell {
     private static final int MAX_ANIMAL_CAPACITY = Data.getOneCellMaxCapacity();
     private static final int MAX_PLANT_CAPACITY = Plant.getCapacity();
     private static final Map<Integer, Integer> SPECIFIC_ANIMAL_CAPACITY_MAP = Data.getOneCellCapacityMap(); // ID животного : макс число в клетке
-    public final List<Animal> populationList = new ArrayList<>(MAX_ANIMAL_CAPACITY);
+    public List<Animal> populationList = new ArrayList<>(MAX_ANIMAL_CAPACITY);
     public final List<Plant> plantList = new ArrayList<>(MAX_PLANT_CAPACITY);
     private static final Map <Animal, Integer> animalCountMap = new HashMap<>(); // Животное : кол-во в клетке
 
@@ -67,15 +67,23 @@ public class Cell {
 
     }
 
-    public boolean isCrowded(List<Animal> animalList, Animal animal) {
-        Map<Animal, Integer> map = new HashMap<>();
+    // Проверка на переполненность
+    public boolean isCrowded(List<Animal> animalList, Animal checkedAnimal) {
+        int animalCount = 0;
 
-        map.put()
+        for (Animal animal : animalList) {
+            if (checkedAnimal.getIDByReflection(checkedAnimal) == animal.getIDByReflection(animal)) {
+                animalCount++;
+            }
 
-        if (animalList.get(animal) == SPECIFIC_ANIMAL_CAPACITY_MAP.get(animal.getIDByReflection(animal))) {
-            return false;
         }
-        return true;
+
+        return animalCount == SPECIFIC_ANIMAL_CAPACITY_MAP.get(checkedAnimal.getIDByReflection(checkedAnimal));
+    }
+
+    // Обновление населения
+    public void refreshPopulation(List<Animal> newPopulationList) {
+        populationList = newPopulationList;
     }
 
 //    @Override
