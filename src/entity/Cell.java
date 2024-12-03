@@ -31,8 +31,8 @@ public class Cell {
             
             // Заполнение листа животными
             for (int i = 0; i < numberOfAnimals; i++) {
-                Animal animal = currentAnimalType.newInstance();
-                animal.setCellNumber(ID);
+                Animal animal = Animal.createAnimalByReflection(currentAnimalType);
+                animal.setCellID(ID);
                 populationList.add(animal);
                 countOfOneType++;
             }
@@ -41,10 +41,6 @@ public class Cell {
             animalCountMap.put(currentAnimalType.newInstance(), countOfOneType);
         }
 
-    }
-
-    public Cell getCell() {
-        return null;
     }
 
     public List<Animal> getAnimals (){
@@ -69,6 +65,17 @@ public class Cell {
             plantList.add(new Plant());
         }
 
+    }
+
+    public boolean isCrowded(List<Animal> animalList, Animal animal) {
+        Map<Animal, Integer> map = new HashMap<>();
+
+        map.put()
+
+        if (animalList.get(animal) == SPECIFIC_ANIMAL_CAPACITY_MAP.get(animal.getIDByReflection(animal))) {
+            return false;
+        }
+        return true;
     }
 
 //    @Override
