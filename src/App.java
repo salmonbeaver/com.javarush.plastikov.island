@@ -6,17 +6,38 @@ import entity.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class App {
-    public static void main(String[] args) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public static void main(String[] args) throws InstantiationException, IllegalAccessException {
         Data.init();
         Island.init();
-        Cell cell = Island.getCell(0);
-        Animal test = cell.populationList.getFirst();
 
-        System.out.println(cell.populationList.size());
-//        System.out.println(test.eat());
-        System.out.println(test.reproduce());
+
+        for (int i = 0; i < Island.getSIZE(); i++) {
+            Cell cell = Island.getCell(0);
+            Thread thread = new Thread(cell);
+            ExecutorService executorService = Executors.newFixedThreadPool(Data.CORES);
+            executorService.execute(thread);
+        }
+
+
+//        System.out.println(cell.getPopulationList().size());
+//
+//    Animal first = cell.getPopulationList().getFirst();
+//    first.move();
+
+
+//        for (Animal animal : cell.getPopulationList()) {
+//            System.out.println("-".repeat(50));
+//            animal.reproduce();
+//            animal.eat();
+//        }
+
+
 
 //        Iterator iterator = cell.populationList.iterator();
 //
@@ -30,7 +51,7 @@ public class App {
 
 
 
-        System.out.println(cell.populationList.size());
+//        System.out.println(cell.getPopulationList().size());
 
 
 

@@ -3,7 +3,7 @@ package entity.herbivore;
 import lombok.Getter;
 import java.util.Map;
 
-@Getter
+
 public class Goat extends Herbivore{
 
     @Getter

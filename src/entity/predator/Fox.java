@@ -3,7 +3,7 @@ package entity.predator;
 import lombok.Getter;
 import java.util.Map;
 
-@Getter
+
 public class Fox extends Predator{
 
     @Getter

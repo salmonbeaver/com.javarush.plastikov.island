@@ -3,11 +3,14 @@ package settings;
 import entity.*;
 import entity.herbivore.*;
 import entity.predator.*;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Data {
+
+    public static final int CORES = Runtime.getRuntime().availableProcessors();
 
     public static final Map<Integer, Class<? extends Animal>> matchID = new HashMap<>();
     protected static final Map<Integer, Double> weightMap = new HashMap<>(); // Коллекция весов
@@ -16,6 +19,8 @@ public class Data {
     protected static Map<Integer, Double> actualSatietyMap = new HashMap<>(); // Коллекция актуальных сытостей
     protected static final Map<Integer, Map<Integer, Integer>> foodPoolMap = new HashMap<>(); // Коллекция кто кого ест
     protected static final Map<Integer, String> picturesMap = new HashMap<>(); // Коллекция эмодзи
+    // CapacityMap methods
+    @Getter
     protected static final Map<Integer, Integer> oneCellCapacityMap = new HashMap<>(); // Коллекция вместимостей в одной клетке
 
     public static void init() {
@@ -202,19 +207,19 @@ public class Data {
         return matchID.get(id).getSimpleName();
     }
 
-    public static double getWeight(int id) {
+    public static double getWeightByID(int id) {
         return weightMap.get(id);
     }
 
-    public static int getSpeed(int id) {
+    public static int getSpeedByID(int id) {
         return speedMap.get(id);
     }
 
-    public static double getMaxSatiety(int id) {
+    public static double getMaxSatietyByID(int id) {
         return maxSatietyMap.get(id);
     }
 
-    public static double getActualSatiety(int id) {
+    public static double getActualSatietyByID(int id) {
         return actualSatietyMap.get(id);
     }
 
@@ -227,21 +232,16 @@ public class Data {
 //        return chancesToEat;
 //    }
 
-    public static Map<Integer, Integer> getFoodPool(int id) {
+    public static Map<Integer, Integer> getFoodPoolByID(int id) {
         return foodPoolMap.get(id);
     }
 
-    public static String getPicture(int id) {
+    public static String getPictureByID(int id) {
         return picturesMap.get(id);
     }
 
     public static void setActualSatietyMap(int id, double satiety) {
         actualSatietyMap.put(id, satiety);
-    }
-
-    // CapacityMap methods
-    public static Map<Integer, Integer> getOneCellCapacityMap() {
-        return oneCellCapacityMap;
     }
 
     public static Integer getSpecificCapacity(int id) {

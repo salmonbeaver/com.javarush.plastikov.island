@@ -1,20 +1,22 @@
 package entity;
 
+import lombok.Getter;
 import settings.Data;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Cell {
+public class Cell implements Runnable{
 
     private static final Random RANDOM = new Random();
     private static int cellCount = 0;
     private final int ID;
-    private static final int MAX_ANIMAL_CAPACITY = Data.getOneCellMaxCapacity();
-    private static final int MAX_PLANT_CAPACITY = Plant.getCapacity();
+    public static final int MAX_ANIMAL_CAPACITY = Data.getOneCellMaxCapacity();
+    public static final int MAX_PLANT_CAPACITY = Plant.getCapacity();
     private static final Map<Integer, Integer> SPECIFIC_ANIMAL_CAPACITY_MAP = Data.getOneCellCapacityMap(); // ID животного : макс число в клетке
-    public List<Animal> populationList = new ArrayList<>(MAX_ANIMAL_CAPACITY);
-    public final List<Plant> plantList = new ArrayList<>(MAX_PLANT_CAPACITY);
-    private static final Map <Animal, Integer> animalCountMap = new HashMap<>(); // Животное : кол-во в клетке
+    @Getter private List<Animal> populationList = new CopyOnWriteArrayList<>();
+    @Getter private final List<Plant> plantList = new ArrayList<>(MAX_PLANT_CAPACITY);
+    @Getter private final Map <Animal, Integer> animalCountMap = new HashMap<>(); // Животное : кол-во в клетке
 
     public Cell() {
         ID = cellCount++;
@@ -72,25 +74,58 @@ public class Cell {
         int animalCount = 0;
 
         for (Animal animal : animalList) {
-            if (checkedAnimal.getIDByReflection(checkedAnimal) == animal.getIDByReflection(animal)) {
+            if (checkedAnimal.getId() == animal.getId()) {
                 animalCount++;
             }
 
         }
+//        System.out.println("Животных " + animalCount + " из " + SPECIFIC_ANIMAL_CAPACITY_MAP.get(checkedAnimal.getId()));
 
-        return animalCount == SPECIFIC_ANIMAL_CAPACITY_MAP.get(checkedAnimal.getIDByReflection(checkedAnimal));
+        return (animalCount != SPECIFIC_ANIMAL_CAPACITY_MAP.get(checkedAnimal.getId()));
     }
 
-    // Обновление населения
-    public void refreshPopulation(List<Animal> newPopulationList) {
-        populationList = newPopulationList;
+    public String getStatus() {
+        String title = "Всего животных в клетке #" + ID + ": " + getPopulationList().size() + "\n";
+        StringBuilder status = new StringBuilder();
+
+        for (Map.Entry<Animal, Integer> entry : animalCountMap.entrySet()) {
+            status.append(entry.getKey().getPicture())
+                    .append(" : ")
+                    .append(entry.getValue())
+                    .append(" | ");
+        }
+        status.append("\n")
+                .append(Data.getPictureByID(Plant.getID()))
+                .append(" : ")
+                .append(plantList.size());
+
+        return title + status;
     }
 
-//    @Override
-//    public void run() {
-//
-//        for (Animal animal : populationList) {
-//            animal.eat();
-//        }
+//    // Обновление населения
+//    public void refreshPopulation(List<Animal> newPopulationList) {
+//        populationList = newPopulationList;
 //    }
+
+    @Override
+    public void run() {
+
+        for (Animal animal : populationList) {
+            System.out.println(Thread.currentThread().getName());
+
+            // Если животное поело или уже сытое - оно размножается
+            if (animal.isHungry()) {
+                if (animal.eat()) {
+                    animal.reproduce();
+                }
+            } else {
+                animal.reproduce();
+            }
+
+            // Затем двигается
+            animal.move();
+
+
+        }
+    }
 }
