@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import settings.*;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 @Setter
@@ -17,9 +16,10 @@ public class Animal extends AbstractAnimal {
     private double weight;
     @Getter private int speed;
     private double maxSatiety;
-    private double actualSatiety;
-    private Map<Integer, Integer> foodPool;
+    @Getter private double actualSatiety;
+    public Map<Integer, Integer> foodPool;
     private int cellID;
+    public boolean isTired = false;
 
     public Animal(int id) {
         ID = id;
@@ -27,11 +27,10 @@ public class Animal extends AbstractAnimal {
         weight = Data.getWeightByID(id);
         speed = Data.getSpeedByID(id);
         maxSatiety = Data.getMaxSatietyByID(id);
-        actualSatiety = maxSatiety * 0.5;
+        actualSatiety = maxSatiety * 0.1;
         foodPool = Data.getFoodPoolByID(id);
     }
 
-    // работает, но с перебоями
     public boolean eat() {
 
         if(!isHungry()) {
@@ -44,101 +43,105 @@ public class Animal extends AbstractAnimal {
         int chance = getActualFoodPool().get(foodID); // шанс соответсвующий этому ID
         boolean canEat = random.nextInt(100) < chance; // проверяем, можем ли съесть еду
 
+        if (foodIDList.isEmpty()) {
+            return false;
+        }
+
+        if (Island.getCell(cellID).getPlantList().isEmpty()) {
+            return false;
+        }
+
+        // Кушаем травку
         if (chance == 100) {
-            Island.getCell(cellID).getPlantList().removeLast();
-            System.out.println(Data.getPictureByID(getId()) + " ate gross");
+            Plant.die(cellID);
+            actualSatiety = Math.min(actualSatiety + Plant.getWeight(), maxSatiety);
+
             return true;
         }
 
+        // Кушаем животное
         if (canEat) {
             List<Animal> populationList = Island.getCell(cellID).getPopulationList();
-            Iterator iterator = populationList.iterator();
-
-            while (iterator.hasNext()) {
-                Animal animal = (Animal) iterator.next();
-
-                if (animal.getId() == foodID) {
-                    System.out.println("Satiety before breakfast is " + actualSatiety);
-                    actualSatiety = Math.min(actualSatiety + animal.weight, maxSatiety);
-                    System.out.println(Data.getPictureByID(getId()) + " ate " + Data.getPictureByID(foodID));
-                    System.out.println("Now satiety is " + actualSatiety);
-
-                    return true;
-                }
-
-            }
 
             for (Animal animal : populationList) {
+
                 if (animal.getId() == foodID) {
                     animal.die();
-                    actualSatiety = Math.max(actualSatiety + animal.weight, maxSatiety);
-                    System.out.println(Data.getPictureByID(getId()) + " ate " + Data.getPictureByID(foodID));
+                    actualSatiety = Math.min(actualSatiety + animal.weight, maxSatiety);
 
                     return true;
                 }
-            }
 
+            }
         }
 
         return false;
     }
 
     public void move() {
-        int turns = speed;
 
-        List<Runnable> directionMethodList = new ArrayList<>();
-        
-        if (this.canGoLeft()) {
-            directionMethodList.add(this::goLeft);
-        }
-        
-         if (this.canGoRight()) {
-            directionMethodList.add(this::goRight);
-        }
-        
-        if (this.canGoDown()) {
-            directionMethodList.add(this::goDown);
-        }
-        
-        if (this.canGoUp()) {
-            directionMethodList.add(this::goUp);
+        if (speed == 0) {
+            isTired = true;
+
+            return;
         }
 
         // Действительное число ходов, которое сделает животное (от 0 до макс возможного)
-        int actuallyMovesCount = MyRandom.random.nextInt(turns);
+        int actualMovesCount = MyRandom.RANDOM.nextInt(speed + 1);
 
-        if (actuallyMovesCount == 0) {
-            System.out.println("Сегодня животное ленивое");
+        // Выпало 0 ходов в этот день
+        if (actualMovesCount == 0) {
+            isTired = true;
+
+            return;
         }
 
-        // Выбор направления и движение в случайную клетку
-        for (int i = 0; i < turns; i++) {
-            int directionID = MyRandom.random.nextInt(directionMethodList.size());
+        // Выпало 1+ ходов в этот день
+        for (int i = 0; i < actualMovesCount; i++) {
+            List<Runnable> directionMethodList = new ArrayList<>();
+
+            if (this.canGoLeft()) {
+                directionMethodList.add(this::goLeft);
+            }
+
+            if (this.canGoRight()) {
+                directionMethodList.add(this::goRight);
+            }
+
+            if (this.canGoDown()) {
+                directionMethodList.add(this::goDown);
+            }
+
+            if (this.canGoUp()) {
+                directionMethodList.add(this::goUp);
+            }
+
+            // Выбор направления
+            int directionID = MyRandom.RANDOM.nextInt(directionMethodList.size());
+
+            //  Движение в случайную клетку
             directionMethodList.get(directionID).run();
+
         }
 
+        isTired = true;
     }
 
-    public boolean reproduce() {
-        boolean isReproduced = false;
+    public void reproduce() {
         Cell cell = Island.getCell(cellID);
 
-        if (!cell.isCrowded(cell.getPopulationList(), this)) {
-            return isReproduced;
+        if (cell.isCrowded(this)) {
+            return;
         }
 
         for (Animal animal : cell.getPopulationList()) {
 
             if (getId() == animal.getId()) {
-                System.out.println(picture + " had it with " + animal.picture);
                 cell.getPopulationList().add(new Animal(getId()));
-                isReproduced = true;
 
-                return isReproduced;
+                return;
             }
         }
-
-        return isReproduced;
     }
 
     public void die() {
@@ -148,15 +151,15 @@ public class Animal extends AbstractAnimal {
 
     public Map<Integer, Integer> getActualFoodPool() {
         Map<Integer, Integer> actualFoodPool = new HashMap<>();
-        List<Animal> populationList = Island.getCell(cellID).getAnimals();
+        List<Integer> populationList = Island.getCell(cellID).getAnimals();
 
         // Делаем выборку доступной еды из находящихся на клетке живности
         for (Map.Entry<Integer, Integer> entry : foodPool.entrySet()) {
 
-            for (Animal animal : populationList) {
-                int check = animal.getId();
+            for (int id : populationList) {
+                int foodID = entry.getKey();
 
-                if (check == entry.getKey()) {
+                if (foodID == id || foodID == Plant.getID()) {
                     actualFoodPool.put(entry.getKey(), entry.getValue());
                 }
 
@@ -170,20 +173,6 @@ public class Animal extends AbstractAnimal {
         System.out.println(actualFoodPool.size());
 
         return actualFoodPool;
-    }
-
-    public int getIDByReflection(Animal animal) {
-        int check = -1;
-
-        try {
-            Field fieldID = animal.getClass().getDeclaredField("ID");
-            fieldID.setAccessible(true);
-            check = (int) fieldID.get(ID);
-        } catch (Exception e) {
-            System.out.println("Вы что-нибудь видели? И я нет -_-");
-        }
-
-        return check;
     }
 
     public static Animal createAnimalByReflection(Class<? extends Animal> animalType) {
@@ -202,52 +191,84 @@ public class Animal extends AbstractAnimal {
         return !(actualSatiety >= maxSatiety * 0.5);
     }
 
+    public void reduceSatiety() {
+        actualSatiety = actualSatiety - maxSatiety / 7;
+    }
+
     private boolean canGoLeft() {
-        return (cellID + 1) % (Island.getWIDTH() + 1) != 1;
+        return (cellID + 1) % (Island.WIDTH) != 1;
     }
 
     private boolean canGoRight() {
-        return (cellID + 1) % (Island.getWIDTH() + 1) != 0;
+        return (cellID + 1) % (Island.WIDTH) != 0;
     }
 
     private boolean canGoUp() {
-        return cellID > Island.getWIDTH();
+        return cellID > Island.WIDTH;
     }
 
     private boolean canGoDown() {
-        return cellID + 1 < (Island.getWIDTH() + 1) * (Island.getHEIGHT() + 1) - Island.getWIDTH() + 1;
+        return cellID + 1 < (Island.WIDTH) * (Island.HEIGHT) - Island.WIDTH;
     }
 
     private void goLeft() {
         int oldCellID = cellID;
-        int newCellID = cellID--;
+        int newCellID = cellID - 1;
+        Cell vacantCell = Island.getCell(newCellID);
+
+        if(vacantCell.isCrowded(this)) {
+            return;
+        }
+
         Island.getCell(newCellID).getPopulationList().add(this);
         Island.getCell(oldCellID).getPopulationList().remove(this);
-        System.out.println(Data.getPictureByID(getId()) + " походил налево");
+
+        cellID = newCellID;
     }
 
     private void goRight() {
         int oldCellID = cellID;
-        int newCellID = cellID++;
+        int newCellID = cellID + 1;
+        Cell vacantCell = Island.getCell(newCellID);
+
+        if(vacantCell.isCrowded(this)) {
+            return;
+        }
+
         Island.getCell(newCellID).getPopulationList().add(this);
         Island.getCell(oldCellID).getPopulationList().remove(this);
-        System.out.println(Data.getPictureByID(getId()) + " походил направо");
+
+        cellID = newCellID;
     }
 
     private void goUp() {
         int oldCellID = cellID;
-        int newCellID = cellID + Island.getWIDTH();
+        int newCellID = cellID - Island.WIDTH;
+        Cell vacantCell = Island.getCell(newCellID);
+
+        if(vacantCell.isCrowded(this)) {
+            return;
+        }
+
         Island.getCell(newCellID).getPopulationList().add(this);
         Island.getCell(oldCellID).getPopulationList().remove(this);
-        System.out.println(Data.getPictureByID(getId()) + " походил вверх");
+
+        cellID = newCellID;
     }
 
     private void goDown() {
         int oldCellID = cellID;
-        int newCellID = cellID - Island.getWIDTH();
+        int newCellID = cellID + Island.WIDTH;
+        Cell vacantCell = Island.getCell(newCellID);
+
+        if(vacantCell.isCrowded(this)) {
+            return;
+        }
+
         Island.getCell(newCellID).getPopulationList().add(this);
         Island.getCell(oldCellID).getPopulationList().remove(this);
-        System.out.println(Data.getPictureByID(getId()) + " походил вниз");
+
+        cellID = newCellID;
     }
 
     public int getId() {
