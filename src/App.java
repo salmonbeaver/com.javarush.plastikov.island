@@ -1,87 +1,55 @@
-
-import entity.herbivore.Deer;
-import entity.predator.Bear;
 import settings.Data;
 import entity.*;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class App {
-    public static void main(String[] args) throws InstantiationException, IllegalAccessException {
+    // ПО ОТДЕЛЬНОСТИ ВСЕ МЕТОДЫ РАБОТАЮТ ПРАВИЛЬНО (ВРОДЕ БЫ),
+    // НО В СОВОКУПНОСТИ ПОЛУЧАЮТСЯ СОМНИТЕЛЬНЫЕ ЦИФРЫ
+    // ПРИ ВЫВОДЕ СТАТИСТИКИ В КОНСОЛЬ
+    public static void main(String[] args) {
         Data.init();
         Island.init();
 
+        System.out.println("СТАРТОВОЕ СОСТОЯНИЕ ОСТРОВА: ");
+        System.out.println(Island.getStatus());
+        System.out.println("-".repeat(210));
 
-        for (int i = 0; i < Island.getSIZE(); i++) {
-            Cell cell = Island.getCell(0);
-            Thread thread = new Thread(cell);
-            ExecutorService executorService = Executors.newFixedThreadPool(Data.CORES);
-            executorService.execute(thread);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
+        int dayCount = 0;
 
-//        System.out.println(cell.getPopulationList().size());
-//
-//    Animal first = cell.getPopulationList().getFirst();
-//    first.move();
+        ScheduledExecutorService scheduledPlantService = Executors.newScheduledThreadPool(2);
+        try (ExecutorService animalLiveService = Executors.newFixedThreadPool(Data.CORES)) {
 
+            while (Data.DAYS_TO_OBSERVE > 0) {
+                dayCount++;
 
-//        for (Animal animal : cell.getPopulationList()) {
-//            System.out.println("-".repeat(50));
-//            animal.reproduce();
-//            animal.eat();
-//        }
+                for (int i = 0; i < Island.SIZE; i++) {
+                    animalLiveService.execute(Island.getCell(i));
+                }
 
+                for (int i = 0; i < Island.SIZE; i++) {
+                    scheduledPlantService.schedule(new Plant(), 0, TimeUnit.SECONDS);
+                }
 
+                System.out.println("ДЕНЬ # " + dayCount);
+                System.out.println(Island.getStatus());
+                System.out.println("-".repeat(210));
 
-//        Iterator iterator = cell.populationList.iterator();
-//
-//        while (iterator.hasNext()) {
-//            Animal animal = (Animal) iterator.next();
-//
-//            if (animal.eat()) {
-//                iterator.remove();
-//            }
-//        }
+                Data.DAYS_TO_OBSERVE--;
 
-
-
-//        System.out.println(cell.getPopulationList().size());
-
-
-
-
-//
-//        Cell cell = new Cell();
-//
-//        cell.populate();
-//
-//        int i = 0;
-//
-//        for (Animal _ : cell.populationList) {
-//            i++;
-//        }
-//
-//        System.out.println("-".repeat(50));
-//
-//        for (Map.Entry<Animal, Integer> entry : cell.animalCountMap.entrySet()) {
-//            System.out.println(entry.getValue() + " " + entry.getKey().getClass().getSimpleName() + "s");
-//        }
-//
-//        System.out.println("-".repeat(50));
-//        System.out.println(i + " out of " + Data.getOneCellMaxCapacity());
-//
-//        System.out.println("-".repeat(50));
-////        cell.live();
-//        Animal animal = new Bear();
-//        System.out.println(animal.getId());
-//        Bear.getId();
-
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
 }

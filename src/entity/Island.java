@@ -1,24 +1,23 @@
 package entity;
 
-import lombok.Getter;
 import settings.Data;
 
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 public class Island {
 
-    @Getter private static final int WIDTH = 100;
-    @Getter private static final int HEIGHT = 20;
-    @Getter private static final int SIZE = WIDTH * HEIGHT;
+    public static final int WIDTH = 100;
+    public static final int HEIGHT = 20;
+    public static final int SIZE = WIDTH * HEIGHT;
     private static final List<Cell> CELL_LIST = new ArrayList<>(SIZE);
 
-    public static void init() throws InstantiationException, IllegalAccessException {
+    public static void init() {
         for (int i = 0; i < SIZE; i++) {
-            Cell cell = new Cell();
-            cell.populate();
+            CountDownLatch cdl = new CountDownLatch(SIZE);
+            Cell cell = new Cell(cdl);
             CELL_LIST.add(cell);
-
         }
     }
 
@@ -39,10 +38,12 @@ public class Island {
 
         for (Cell cell : CELL_LIST) {
 
-            for (Map.Entry<Animal, Integer> cellEntry : cell.getAnimalCountMap().entrySet()) {
-                int oldValue = islandAnimalCountMap.get(cellEntry.getKey().getId());
+            cell.refreshAnimalCountMap();
+
+            for (Map.Entry<Integer, Integer> cellEntry : cell.getAnimalCountMap().entrySet()) {
+                int oldValue = islandAnimalCountMap.get(cellEntry.getKey());
                 int newValue = oldValue + cellEntry.getValue();
-                islandAnimalCountMap.put(cellEntry.getKey().getId(), newValue);
+                islandAnimalCountMap.put(cellEntry.getKey(), newValue);
             }
 
             animalCount = animalCount + cell.getPopulationList().size();
