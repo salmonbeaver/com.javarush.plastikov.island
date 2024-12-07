@@ -11,4 +11,9 @@ public class Caterpillar extends Herbivore{
         super(ID);
     }
 
+    @Override
+    public void reduceSatiety() {
+        // Этому животному не нужно насыщатся по условию
+        // Если сделать ему сытость > 0, переопределенный метод удалить
+    }
 }

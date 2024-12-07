@@ -2,49 +2,48 @@ package entity;
 
 import lombok.Getter;
 import settings.Data;
+import settings.MyRandom;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 
 public class Cell implements Runnable {
 
     public CountDownLatch latch;
 
-    private static final Random RANDOM = new Random();
     private static int cellCount = 0;
-    private final int ID;
+    private final int id;
     public static final int MAX_ANIMAL_CAPACITY = Data.getOneCellMaxCapacity();
     public static final int MAX_PLANT_CAPACITY = Plant.getCapacity();
     private static final Map<Integer, Integer> SPECIFIC_ANIMAL_CAPACITY_MAP = Data.getOneCellCapacityMap(); // ID животного : макс число в клетке
     @Getter
-    private List<Animal> populationList = new CopyOnWriteArrayList<>();
+    private ConcurrentLinkedQueue<Animal> populationQueue = new ConcurrentLinkedQueue<>();
     @Getter
-    private List<Plant> plantList = new CopyOnWriteArrayList<>();
+    private List<Plant> plantList = new ArrayList<>();
     @Getter
     private Map<Integer, Integer> animalCountMap = new HashMap<>(); // Животное : кол-во в клетке
 
     public Cell(CountDownLatch c) {
-        ID = cellCount++;
-        fillWithPlants();
+        id = cellCount++;
+        fillWithPlants(Plant.getCapacity());
         populate();
         refreshAnimalCountMap();
         latch = c;
     }
 
-
-    // Стартовое заполнение list'a животными
+    // Стартовое заселение животных
     public void populate() {
 
         for (Map.Entry<Integer, Integer> entry : SPECIFIC_ANIMAL_CAPACITY_MAP.entrySet()) {
-            int numberOfAnimals = RANDOM.nextInt(entry.getValue() - 1) + 2; // выбираем случайное число животных (от двух до макс возможного их числа)
-            Class<? extends Animal> currentAnimalType = Data.getClassByID(entry.getKey()); // класс текущего животного
+            int numberOfAnimals = MyRandom.RANDOM.nextInt(entry.getValue() - 1) + 2; // выбираем случайное число животных (2-MAX_CAPACITY)
+            Class<? extends Animal> animalType = Data.getClassByID(entry.getKey()); // класс текущего животного
 
             // Заполнение листа животными
             for (int i = 0; i < numberOfAnimals; i++) {
-                Animal animal = Animal.createAnimalByReflection(currentAnimalType);
-                animal.setCellID(ID);
-                populationList.add(animal);
+                Animal animal = Animal.createAnimalByReflection(animalType);
+                animal.setCellID(id);
+                populationQueue.add(animal);
             }
         }
     }
@@ -55,7 +54,7 @@ public class Cell implements Runnable {
             animalCountMap.put(i, 0);
         }
 
-        for (Animal animal : populationList) {
+        for (Animal animal : populationQueue) {
             int oldValue = animalCountMap.get(animal.getId());
             int newValue = oldValue + 1;
 
@@ -73,21 +72,11 @@ public class Cell implements Runnable {
         return animals;
     }
 
-    // Стартовое заполнение листа растениями
-    private void fillWithPlants() {
-
-        int numberOfPlants = RANDOM.nextInt(Plant.getCapacity()) + 1;
-
-        for (int i = 0; i < numberOfPlants; i++) {
-            growPlant();
-        }
-    }
-
     // Проверка на переполненность
     public boolean isCrowded(Animal checkedAnimal) {
         int animalCount = 0;
 
-        for (Animal animal : populationList) {
+        for (Animal animal : populationQueue) {
             if (checkedAnimal.getId() == animal.getId()) {
                 animalCount++;
             }
@@ -97,9 +86,12 @@ public class Cell implements Runnable {
         return (animalCount == SPECIFIC_ANIMAL_CAPACITY_MAP.get(checkedAnimal.getId()));
     }
 
+    // Сводная информация по клетке
     public String getStatus() {
-        String title = "Всего животных в клетке #" + ID + ": " + getPopulationList().size() + "\n";
+        String title = "Всего животных в клетке #" + id + ": " + getPopulationQueue().size() + "\n";
         StringBuilder status = new StringBuilder();
+
+        refreshAnimalCountMap();
 
         for (Map.Entry<Integer, Integer> entry : animalCountMap.entrySet()) {
             status.append(Data.getPictureByID(entry.getKey()))
@@ -115,44 +107,48 @@ public class Cell implements Runnable {
         return title + status;
     }
 
-    public void growPlant() {
-        Plant plant = new Plant();
+    public void fillWithPlants(int plantNumber) {
 
-        if (plantList.size() == Plant.getCapacity()) {
-            return;
+        for (int i = 0; i < plantNumber; i++) {
+
+            if (plantList.size() == Plant.getCapacity()) {
+                return;
+            }
+
+            Plant plant = new Plant();
+
+            plant.setCellID(id);
+            plantList.add(plant);
         }
-
-        plant.setCellID(ID);
-        plantList.add(plant);
     }
 
     @Override
     public void run() {
-
-        for (Animal animal : populationList) {
-
-            if (animal.isTired) {
-                continue;
-            }
-
-            // Если животное поело или уже сытое - оно размножается
-            if (animal.isHungry()) {
-                if (animal.eat()) {
-                    animal.reproduce();
-                }
-            } else {
-                animal.reproduce();
-            }
-
-            animal.move(); // Затем двигается
-            animal.reduceSatiety(); // и сжигает калории
-
-            // Если сытость = 0 - животное умирает
-            if (animal.getActualSatiety() <= 0) {
-                animal.die();
-            }
-
-            latch.countDown();
-        }
+//
+//        for (Animal animal : populationList) {
+//
+//            if (animal.isTired) {
+//                continue;
+//            }
+//
+//            // Если животное поело или уже сытое - оно размножается
+//            if (animal.isHungry()) {
+//                if (animal.eat()) {
+//                    animal.reproduce();
+//                }
+//            } else {
+//                animal.reproduce();
+//            }
+//
+//            animal.move(); // Затем двигается
+//            animal.reduceSatiety(); // и сжигает калории
+//
+//            // Если сытость = 0 - животное умирает
+//            if (animal.getActualSatiety() <= 0) {
+//                animal.die();
+//            }
+//
+//            latch.countDown();
+//        }
     }
 }

@@ -14,13 +14,18 @@ public class Plant implements Runnable{
 
     public static void die(int cellID) {
         Cell cell = Island.getCell(cellID);
-        cell.getPlantList().removeLast();
+
+        if (!cell.getPlantList().isEmpty()) {
+            cell.getPlantList().removeLast();
+        }
     }
 
     @Override
     public void run() {
-        for (int i = 0; i < Plant.getGrowSpeed(); i++) {
-            Island.getCell(cellID).growPlant();
-        }
+
+//        for (int i = 0; i < Plant.getGrowSpeed(); i++) {
+//            Island.getCell(cellID).fillWithPlants(getCapacity());
+//        }
+
     }
 }

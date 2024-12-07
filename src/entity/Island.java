@@ -46,7 +46,7 @@ public class Island {
                 islandAnimalCountMap.put(cellEntry.getKey(), newValue);
             }
 
-            animalCount = animalCount + cell.getPopulationList().size();
+            animalCount = animalCount + cell.getPopulationQueue().size();
             plantCount = plantCount + cell.getPlantList().size();
         }
 
@@ -78,5 +78,15 @@ public class Island {
         String title = "Всего животных на острове : " + formattedAnimalCount + " из " + formattedMaxAnimalCapacity + " возможных\n";
 
         return title + status;
+    }
+
+    public static void setNewDay() {
+
+        for (Cell cell : CELL_LIST) {
+
+            for (Animal animal : cell.getPopulationQueue()) {
+                animal.becomeFreshAgain();
+            }
+        }
     }
 }

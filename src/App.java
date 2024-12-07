@@ -26,7 +26,7 @@ public class App {
         ScheduledExecutorService scheduledPlantService = Executors.newScheduledThreadPool(2);
         try (ExecutorService animalLiveService = Executors.newFixedThreadPool(Data.CORES)) {
 
-            while (Data.DAYS_TO_OBSERVE > 0) {
+            while (Data.daysToObserve > 0) {
                 dayCount++;
 
                 for (int i = 0; i < Island.SIZE; i++) {
@@ -34,20 +34,17 @@ public class App {
                 }
 
                 for (int i = 0; i < Island.SIZE; i++) {
-                    scheduledPlantService.schedule(new Plant(), 0, TimeUnit.SECONDS);
+
+                    try {
+                        Island.getCell(i).latch.await();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
 
-                System.out.println("ДЕНЬ # " + dayCount);
                 System.out.println(Island.getStatus());
-                System.out.println("-".repeat(210));
 
-                Data.DAYS_TO_OBSERVE--;
-
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                Data.daysToObserve--;
             }
         }
     }

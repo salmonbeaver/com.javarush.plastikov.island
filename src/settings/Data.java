@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Data {
 
-    public static int DAYS_TO_OBSERVE = 10;
+    public static int daysToObserve = 10;
     public static final int CORES = Runtime.getRuntime().availableProcessors();
 
     public static final Map<Integer, Class<? extends Animal>> matchID = new HashMap<>();
@@ -20,9 +20,7 @@ public class Data {
     protected static Map<Integer, Double> actualSatietyMap = new HashMap<>(); // Коллекция актуальных сытостей
     protected static final Map<Integer, Map<Integer, Integer>> foodPoolMap = new HashMap<>(); // Коллекция кто кого ест
     protected static final Map<Integer, String> picturesMap = new HashMap<>(); // Коллекция эмодзи
-    // CapacityMap methods
-    @Getter
-    protected static final Map<Integer, Integer> oneCellCapacityMap = new HashMap<>(); // Коллекция вместимостей в одной клетке
+    @Getter protected static final Map<Integer, Integer> oneCellCapacityMap = new HashMap<>(); // Коллекция вместимостей в одной клетке
 
     public static void init() {
 
@@ -186,26 +184,38 @@ public class Data {
         picturesMap.put(Wolf.getID(), "\uD83D\uDC3A"); // 🐺
         picturesMap.put(Plant.getID(), "\uD83C\uDF3F"); // 🌿
 
-        oneCellCapacityMap.put(Bear.getID(), 5);
-        oneCellCapacityMap.put(Boar.getID(), 50);
+        oneCellCapacityMap.put(Bear.getID(), 10);
+        oneCellCapacityMap.put(Boar.getID(), 10);
         oneCellCapacityMap.put(Buffalo.getID(), 10);
-        oneCellCapacityMap.put(Caterpillar.getID(), 1000);
-        oneCellCapacityMap.put(Deer.getID(), 20);
-        oneCellCapacityMap.put(Duck.getID(), 200);
-        oneCellCapacityMap.put(Eagle.getID(), 20);
-        oneCellCapacityMap.put(Fox.getID(), 30);
-        oneCellCapacityMap.put(Goat.getID(), 140);
-        oneCellCapacityMap.put(Horse.getID(), 20);
-        oneCellCapacityMap.put(Mouse.getID(), 500);
-        oneCellCapacityMap.put(Rabbit.getID(), 150);
-        oneCellCapacityMap.put(Sheep.getID(), 140);
-        oneCellCapacityMap.put(Snake.getID(), 30);
-        oneCellCapacityMap.put(Wolf.getID(), 30);
+        oneCellCapacityMap.put(Caterpillar.getID(), 10);
+        oneCellCapacityMap.put(Deer.getID(), 10);
+        oneCellCapacityMap.put(Duck.getID(), 10);
+        oneCellCapacityMap.put(Eagle.getID(), 10);
+        oneCellCapacityMap.put(Fox.getID(), 10);
+        oneCellCapacityMap.put(Goat.getID(), 10);
+        oneCellCapacityMap.put(Horse.getID(), 10);
+        oneCellCapacityMap.put(Mouse.getID(), 10);
+        oneCellCapacityMap.put(Rabbit.getID(), 10);
+        oneCellCapacityMap.put(Sheep.getID(), 10);
+        oneCellCapacityMap.put(Snake.getID(), 10);
+        oneCellCapacityMap.put(Wolf.getID(), 10);
 
-    }
+//        oneCellCapacityMap.put(Bear.getID(), 5);
+//        oneCellCapacityMap.put(Boar.getID(), 50);
+//        oneCellCapacityMap.put(Buffalo.getID(), 10);
+//        oneCellCapacityMap.put(Caterpillar.getID(), 1000);
+//        oneCellCapacityMap.put(Deer.getID(), 20);
+//        oneCellCapacityMap.put(Duck.getID(), 200);
+//        oneCellCapacityMap.put(Eagle.getID(), 20);
+//        oneCellCapacityMap.put(Fox.getID(), 30);
+//        oneCellCapacityMap.put(Goat.getID(), 140);
+//        oneCellCapacityMap.put(Horse.getID(), 20);
+//        oneCellCapacityMap.put(Mouse.getID(), 500);
+//        oneCellCapacityMap.put(Rabbit.getID(), 150);
+//        oneCellCapacityMap.put(Sheep.getID(), 140);
+//        oneCellCapacityMap.put(Snake.getID(), 30);
+//        oneCellCapacityMap.put(Wolf.getID(), 30);
 
-    public static String getNameByID(int id) {
-        return matchID.get(id).getSimpleName();
     }
 
     public static double getWeightByID(int id) {
@@ -219,19 +229,6 @@ public class Data {
     public static double getMaxSatietyByID(int id) {
         return maxSatietyMap.get(id);
     }
-
-    public static double getActualSatietyByID(int id) {
-        return actualSatietyMap.get(id);
-    }
-
-//    public static List<Integer> getChancesToEat(Class<? extends Animal> clazz) {
-//        List<Integer> chancesToEat = new ArrayList<>();
-//
-//        for (Map.Entry<Class<? extends Animal>, Map<Class<?>, Integer>> entry : foodPoolMap.entrySet()) {
-//            chancesToEat.add(entry.getValue().g)
-//        }
-//        return chancesToEat;
-//    }
 
     public static Map<Integer, Integer> getFoodPoolByID(int id) {
         return foodPoolMap.get(id);
