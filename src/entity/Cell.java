@@ -1,5 +1,6 @@
 package entity;
 
+import entity.herbivore.Caterpillar;
 import lombok.Getter;
 import settings.Data;
 import settings.MyRandom;
@@ -10,7 +11,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class Cell implements Runnable {
 
-    public CountDownLatch latch;
+
 
     private static int cellCount = 0;
     private final int id;
@@ -23,13 +24,14 @@ public class Cell implements Runnable {
     private List<Plant> plantList = new ArrayList<>();
     @Getter
     private Map<Integer, Integer> animalCountMap = new HashMap<>(); // Животное : кол-во в клетке
+    public final CountDownLatch LATCH;
 
-    public Cell(CountDownLatch c) {
+    public Cell() {
         id = cellCount++;
         fillWithPlants(Plant.getCapacity());
         populate();
         refreshAnimalCountMap();
-        latch = c;
+        LATCH = new CountDownLatch(populationQueue.size());
     }
 
     // Стартовое заселение животных
@@ -124,31 +126,32 @@ public class Cell implements Runnable {
 
     @Override
     public void run() {
-//
-//        for (Animal animal : populationList) {
-//
-//            if (animal.isTired) {
-//                continue;
-//            }
-//
-//            // Если животное поело или уже сытое - оно размножается
-//            if (animal.isHungry()) {
-//                if (animal.eat()) {
-//                    animal.reproduce();
-//                }
-//            } else {
-//                animal.reproduce();
-//            }
-//
-//            animal.move(); // Затем двигается
-//            animal.reduceSatiety(); // и сжигает калории
-//
-//            // Если сытость = 0 - животное умирает
-//            if (animal.getActualSatiety() <= 0) {
-//                animal.die();
-//            }
-//
-//            latch.countDown();
-//        }
+
+        for (Animal animal : getPopulationQueue()) {
+            animal.reduceSatiety();
+
+            if (animal.getActualSatiety() < 0) {
+                getPopulationQueue().remove();
+                LATCH.countDown();
+
+                continue;
+            }
+
+            if (!(animal instanceof Caterpillar) && animal.getActualSatiety() < 0) {
+                System.out.println(animal.getPicture() + " " + animal.getActualSatiety());
+            }
+
+            if (animal.isHungry()) {
+                if (animal.eat()) {
+                    animal.reproduce();
+                }
+            } else {
+                animal.reproduce();
+            }
+
+            animal.move();
+
+            LATCH.countDown();
+        }
     }
 }
