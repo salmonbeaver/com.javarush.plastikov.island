@@ -8,15 +8,14 @@ import java.util.concurrent.CountDownLatch;
 
 public class Island {
 
-    public static final int WIDTH = 100;
+    public static final int WIDTH = 20;
     public static final int HEIGHT = 20;
     public static final int SIZE = WIDTH * HEIGHT;
     private static final List<Cell> CELL_LIST = new ArrayList<>(SIZE);
 
     public static void init() {
         for (int i = 0; i < SIZE; i++) {
-            CountDownLatch cdl = new CountDownLatch(SIZE);
-            Cell cell = new Cell(cdl);
+            Cell cell = new Cell();
             CELL_LIST.add(cell);
         }
     }
@@ -25,6 +24,7 @@ public class Island {
         return CELL_LIST.get(i);
     }
 
+    // Сводная информация по острову
     public static String getStatus() {
         int animalCount = 0;
         int plantCount = 0;
@@ -68,14 +68,13 @@ public class Island {
                 .append(Data.getPictureByID(Plant.getID()))
                 .append(" : ")
                 .append(formattedPlantCount)
-                .append(" из ")
-                .append(formattedMaxPlantCapacity)
-                .append(" возможных");
+                .append(" / ")
+                .append(formattedMaxPlantCapacity);
 
         String formattedMaxAnimalCapacity = NumberFormat.getInstance(Locale.US).format((long) Cell.MAX_ANIMAL_CAPACITY * SIZE);
         String formattedAnimalCount = NumberFormat.getInstance(Locale.US).format(animalCount);
 
-        String title = "Всего животных на острове : " + formattedAnimalCount + " из " + formattedMaxAnimalCapacity + " возможных\n";
+        String title = "Всего животных на острове : " + formattedAnimalCount + " / " + formattedMaxAnimalCapacity + "\n";
 
         return title + status;
     }
@@ -83,6 +82,8 @@ public class Island {
     public static void setNewDay() {
 
         for (Cell cell : CELL_LIST) {
+
+            cell.fillWithPlants(Plant.getCapacity() / 4);
 
             for (Animal animal : cell.getPopulationQueue()) {
                 animal.becomeFreshAgain();

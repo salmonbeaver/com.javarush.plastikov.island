@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class Data {
 
-    public static int daysToObserve = 10;
+    public static final int OBSERVE_DAYS = 10;
     public static final int CORES = Runtime.getRuntime().availableProcessors();
 
     public static final Map<Integer, Class<? extends Animal>> matchID = new HashMap<>();
@@ -184,37 +184,37 @@ public class Data {
         picturesMap.put(Wolf.getID(), "\uD83D\uDC3A"); // 🐺
         picturesMap.put(Plant.getID(), "\uD83C\uDF3F"); // 🌿
 
-        oneCellCapacityMap.put(Bear.getID(), 10);
-        oneCellCapacityMap.put(Boar.getID(), 10);
-        oneCellCapacityMap.put(Buffalo.getID(), 10);
-        oneCellCapacityMap.put(Caterpillar.getID(), 10);
-        oneCellCapacityMap.put(Deer.getID(), 10);
-        oneCellCapacityMap.put(Duck.getID(), 10);
-        oneCellCapacityMap.put(Eagle.getID(), 10);
-        oneCellCapacityMap.put(Fox.getID(), 10);
-        oneCellCapacityMap.put(Goat.getID(), 10);
-        oneCellCapacityMap.put(Horse.getID(), 10);
-        oneCellCapacityMap.put(Mouse.getID(), 10);
-        oneCellCapacityMap.put(Rabbit.getID(), 10);
-        oneCellCapacityMap.put(Sheep.getID(), 10);
-        oneCellCapacityMap.put(Snake.getID(), 10);
-        oneCellCapacityMap.put(Wolf.getID(), 10);
+//        oneCellCapacityMap.put(Bear.getID(), 3);
+//        oneCellCapacityMap.put(Boar.getID(), 3);
+//        oneCellCapacityMap.put(Buffalo.getID(), 3);
+//        oneCellCapacityMap.put(Caterpillar.getID(), 3);
+//        oneCellCapacityMap.put(Deer.getID(), 3);
+//        oneCellCapacityMap.put(Duck.getID(), 3);
+//        oneCellCapacityMap.put(Eagle.getID(), 3);
+//        oneCellCapacityMap.put(Fox.getID(), 3);
+//        oneCellCapacityMap.put(Goat.getID(), 3);
+//        oneCellCapacityMap.put(Horse.getID(), 3);
+//        oneCellCapacityMap.put(Mouse.getID(), 3);
+//        oneCellCapacityMap.put(Rabbit.getID(), 3);
+//        oneCellCapacityMap.put(Sheep.getID(), 3);
+//        oneCellCapacityMap.put(Snake.getID(), 3);
+//        oneCellCapacityMap.put(Wolf.getID(), 3);
 
-//        oneCellCapacityMap.put(Bear.getID(), 5);
-//        oneCellCapacityMap.put(Boar.getID(), 50);
-//        oneCellCapacityMap.put(Buffalo.getID(), 10);
-//        oneCellCapacityMap.put(Caterpillar.getID(), 1000);
-//        oneCellCapacityMap.put(Deer.getID(), 20);
-//        oneCellCapacityMap.put(Duck.getID(), 200);
-//        oneCellCapacityMap.put(Eagle.getID(), 20);
-//        oneCellCapacityMap.put(Fox.getID(), 30);
-//        oneCellCapacityMap.put(Goat.getID(), 140);
-//        oneCellCapacityMap.put(Horse.getID(), 20);
-//        oneCellCapacityMap.put(Mouse.getID(), 500);
-//        oneCellCapacityMap.put(Rabbit.getID(), 150);
-//        oneCellCapacityMap.put(Sheep.getID(), 140);
-//        oneCellCapacityMap.put(Snake.getID(), 30);
-//        oneCellCapacityMap.put(Wolf.getID(), 30);
+        oneCellCapacityMap.put(Bear.getID(), 5);
+        oneCellCapacityMap.put(Boar.getID(), 50);
+        oneCellCapacityMap.put(Buffalo.getID(), 10);
+        oneCellCapacityMap.put(Caterpillar.getID(), 1000);
+        oneCellCapacityMap.put(Deer.getID(), 20);
+        oneCellCapacityMap.put(Duck.getID(), 200);
+        oneCellCapacityMap.put(Eagle.getID(), 20);
+        oneCellCapacityMap.put(Fox.getID(), 30);
+        oneCellCapacityMap.put(Goat.getID(), 140);
+        oneCellCapacityMap.put(Horse.getID(), 20);
+        oneCellCapacityMap.put(Mouse.getID(), 500);
+        oneCellCapacityMap.put(Rabbit.getID(), 150);
+        oneCellCapacityMap.put(Sheep.getID(), 140);
+        oneCellCapacityMap.put(Snake.getID(), 30);
+        oneCellCapacityMap.put(Wolf.getID(), 30);
 
     }
 

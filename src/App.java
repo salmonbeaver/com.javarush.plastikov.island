@@ -4,9 +4,7 @@ import entity.*;
 import java.util.concurrent.*;
 
 public class App {
-    // ПО ОТДЕЛЬНОСТИ ВСЕ МЕТОДЫ РАБОТАЮТ ПРАВИЛЬНО (ВРОДЕ БЫ),
-    // НО В СОВОКУПНОСТИ ПОЛУЧАЮТСЯ СОМНИТЕЛЬНЫЕ ЦИФРЫ
-    // ПРИ ВЫВОДЕ СТАТИСТИКИ В КОНСОЛЬ
+
     public static void main(String[] args) {
         Data.init();
         Island.init();
@@ -26,7 +24,7 @@ public class App {
         ScheduledExecutorService scheduledPlantService = Executors.newScheduledThreadPool(2);
         try (ExecutorService animalLiveService = Executors.newFixedThreadPool(Data.CORES)) {
 
-            while (Data.daysToObserve > 0) {
+            while (Data.OBSERVE_DAYS > 0) {
                 dayCount++;
 
                 for (int i = 0; i < Island.SIZE; i++) {
@@ -36,15 +34,13 @@ public class App {
                 for (int i = 0; i < Island.SIZE; i++) {
 
                     try {
-                        Island.getCell(i).latch.await();
+                        Island.getCell(i).LATCH.await();
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
                 }
 
                 System.out.println(Island.getStatus());
-
-                Data.daysToObserve--;
             }
         }
     }
