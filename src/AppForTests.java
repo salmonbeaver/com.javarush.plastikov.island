@@ -1,22 +1,15 @@
-import entity.Animal;
-import entity.Cell;
 import entity.Island;
-import entity.Plant;
-import entity.herbivore.Caterpillar;
 import settings.Data;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class AppForTests {
+
+    public static final int OBSERVE_DAYS = 10;
 
     public static void main(String[] args) throws InterruptedException {
         Data.init();
         Island.init();
 
-        Simulation simulation = new Simulation();
-        simulation.go();
+        Simulation.go(OBSERVE_DAYS);
     }
 }
 

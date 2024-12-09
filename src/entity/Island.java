@@ -4,11 +4,10 @@ import settings.Data;
 
 import java.text.NumberFormat;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
 
 public class Island {
 
-    public static final int WIDTH = 20;
+    public static final int WIDTH = 100;
     public static final int HEIGHT = 20;
     public static final int SIZE = WIDTH * HEIGHT;
     private static final List<Cell> CELL_LIST = new ArrayList<>(SIZE);
@@ -77,17 +76,5 @@ public class Island {
         String title = "Всего животных на острове : " + formattedAnimalCount + " / " + formattedMaxAnimalCapacity + "\n";
 
         return title + status;
-    }
-
-    public static void setNewDay() {
-
-        for (Cell cell : CELL_LIST) {
-
-            cell.fillWithPlants(Plant.getCapacity() / 4);
-
-            for (Animal animal : cell.getPopulationQueue()) {
-                animal.becomeFreshAgain();
-            }
-        }
     }
 }

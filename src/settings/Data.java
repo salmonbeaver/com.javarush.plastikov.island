@@ -10,7 +10,6 @@ import java.util.Map;
 
 public class Data {
 
-    public static final int OBSERVE_DAYS = 10;
     public static final int CORES = Runtime.getRuntime().availableProcessors();
 
     public static final Map<Integer, Class<? extends Animal>> matchID = new HashMap<>();

@@ -11,8 +11,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class Cell implements Runnable {
 
-
-
+    public CountDownLatch latch;
     private static int cellCount = 0;
     private final int id;
     public static final int MAX_ANIMAL_CAPACITY = Data.getOneCellMaxCapacity();
@@ -24,14 +23,13 @@ public class Cell implements Runnable {
     private List<Plant> plantList = new ArrayList<>();
     @Getter
     private Map<Integer, Integer> animalCountMap = new HashMap<>(); // Животное : кол-во в клетке
-    public final CountDownLatch LATCH;
+
 
     public Cell() {
         id = cellCount++;
-        fillWithPlants(Plant.getCapacity());
+        fillWithPlants(Plant.getGrowSpeed());
         populate();
         refreshAnimalCountMap();
-        LATCH = new CountDownLatch(populationQueue.size());
     }
 
     // Стартовое заселение животных
@@ -128,17 +126,13 @@ public class Cell implements Runnable {
     public void run() {
 
         for (Animal animal : getPopulationQueue()) {
+
             animal.reduceSatiety();
 
             if (animal.getActualSatiety() < 0) {
                 getPopulationQueue().remove();
-                LATCH.countDown();
 
                 continue;
-            }
-
-            if (!(animal instanceof Caterpillar) && animal.getActualSatiety() < 0) {
-                System.out.println(animal.getPicture() + " " + animal.getActualSatiety());
             }
 
             if (animal.isHungry()) {
@@ -150,8 +144,12 @@ public class Cell implements Runnable {
             }
 
             animal.move();
-
-            LATCH.countDown();
         }
+
+        latch.countDown();
+    }
+
+    public void setCDL(CountDownLatch latch) {
+        this.latch = latch;
     }
 }

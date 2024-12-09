@@ -67,7 +67,10 @@ public class Animal extends AbstractAnimal {
 
         // Кушаем травку
         if (chance == 100) {
-            Plant.die(cellID);
+            if (!Island.getCell(cellID).getPlantList().isEmpty()) {
+                Island.getCell(cellID).getPlantList().removeLast();
+            }
+
             actualSatiety = Math.min(actualSatiety + Plant.getWeight(), maxSatiety);
 
             return true;
@@ -239,10 +242,17 @@ public class Animal extends AbstractAnimal {
     private void goLeft() {
         int oldCellID = cellID;
         int newCellID = cellID - 1;
-        Cell vacantCell = Island.getCell(newCellID);
+        Cell vacantCell;
 
-        if (vacantCell.isCrowded(this)) {
-            return;
+        try {
+            vacantCell = Island.getCell(newCellID);
+            if (vacantCell.isCrowded(this)) {
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Походил влево и ошибка");
+            System.out.println("oldCellID -> " + newCellID);
+            System.out.println("newCellID -> " + newCellID);
         }
 
         Island.getCell(newCellID).getPopulationQueue().add(this);
@@ -254,10 +264,17 @@ public class Animal extends AbstractAnimal {
     private void goRight() {
         int oldCellID = cellID;
         int newCellID = cellID + 1;
-        Cell vacantCell = Island.getCell(newCellID);
+        Cell vacantCell;
 
-        if (vacantCell.isCrowded(this)) {
-            return;
+        try {
+            vacantCell = Island.getCell(newCellID);
+            if (vacantCell.isCrowded(this)) {
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Походил вправо и ошибка");
+            System.out.println("oldCellID -> " + newCellID);
+            System.out.println("newCellID -> " + newCellID);
         }
 
         Island.getCell(newCellID).getPopulationQueue().add(this);
@@ -269,10 +286,17 @@ public class Animal extends AbstractAnimal {
     private void goUp() {
         int oldCellID = cellID;
         int newCellID = cellID - Island.WIDTH;
-        Cell vacantCell = Island.getCell(newCellID);
+        Cell vacantCell;
 
-        if (vacantCell.isCrowded(this)) {
-            return;
+        try {
+            vacantCell = Island.getCell(newCellID);
+            if (vacantCell.isCrowded(this)) {
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Походил вверх и ошибка");
+            System.out.println("oldCellID -> " + newCellID);
+            System.out.println("newCellID -> " + newCellID);
         }
 
         Island.getCell(newCellID).getPopulationQueue().add(this);
@@ -284,10 +308,17 @@ public class Animal extends AbstractAnimal {
     private void goDown() {
         int oldCellID = cellID;
         int newCellID = cellID + Island.WIDTH;
-        Cell vacantCell = Island.getCell(newCellID);
+        Cell vacantCell;
 
-        if (vacantCell.isCrowded(this)) {
-            return;
+        try {
+            vacantCell = Island.getCell(newCellID);
+            if (vacantCell.isCrowded(this)) {
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Походил вниз и ошибка");
+            System.out.println("oldCellID -> " + newCellID);
+            System.out.println("newCellID -> " + newCellID);
         }
 
         Island.getCell(newCellID).getPopulationQueue().add(this);

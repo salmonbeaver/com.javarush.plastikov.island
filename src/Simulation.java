@@ -1,43 +1,34 @@
-import entity.Cell;
 import entity.Island;
 import settings.Data;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class Simulation {
 
-    public void go() throws InterruptedException {
+    public static final ExecutorService animalLiveService = Executors.newFixedThreadPool(Data.CORES);
 
+    public static void go(int days) {
 
+        CountDownLatch latch = new CountDownLatch(1);
 
-        ExecutorService animalLiveService = Executors.newFixedThreadPool(Data.CORES);
+        try (ScheduledExecutorService newDayService = Executors.newScheduledThreadPool(Data.CORES)) {
 
-        for (int i = 1; i < 10; i++) {
+            for (int i = 0; i < days; i++) {
 
-            Island.setNewDay();
+                newDayService.scheduleAtFixedRate(new Sunrise(latch), 0, 2, TimeUnit.SECONDS);
 
-            for (int j = 0; j < Island.SIZE; j++) {
-                Cell currentCell = Island.getCell(j);
+                try {
+                    latch.await();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
 
-                animalLiveService.execute(currentCell);
-
-                currentCell.LATCH.await();
+                System.out.println("DAY #" + (i + 1));
+                System.out.println(Island.getStatus());
+                System.out.println("-".repeat(210));
             }
-
-            System.out.println("-".repeat(210));
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-            System.out.println("DAY #" + i);
-            System.out.println(Island.getStatus());
-
-
         }
-    }
 
+        animalLiveService.shutdown();
+    }
 }
