@@ -9,6 +9,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.logging.Logger;
 
 @Setter
 public class Animal extends AbstractAnimal {
@@ -39,7 +40,6 @@ public class Animal extends AbstractAnimal {
         isMoved = true;
     }
 
-    // Устраивает
     public boolean eat() {
 
         if (!isHungry()) {
@@ -52,11 +52,8 @@ public class Animal extends AbstractAnimal {
         int chance = getActualFoodPool().get(foodID); // шанс соответсвующий этому ID
         boolean canEat = MyRandom.RANDOM.nextInt(100) < chance; // проверяем, можем ли съесть еду
 
-        if (foodIDList.isEmpty()) {
-            return false;
-        }
-
-        if (Island.getCell(cellID).getPlantList().isEmpty()) {
+        // Еды нет
+        if (foodIDList.isEmpty() || Island.getCell(cellID).getPlantList().isEmpty()) {
             return false;
         }
 
@@ -67,8 +64,20 @@ public class Animal extends AbstractAnimal {
 
         // Кушаем травку
         if (chance == 100) {
+
             if (!Island.getCell(cellID).getPlantList().isEmpty()) {
-                Island.getCell(cellID).getPlantList().removeLast();
+
+                try {
+                    Island.getCell(cellID).getPlantList().removeLast();
+                } catch (RuntimeException e) {
+                    Logger logger = Logger.getLogger(getClass().getName());
+                    logger.info(getPicture()
+                            + " попытался съесть "
+                            + Data.getPictureByID(Plant.getID())
+                            + ", но в его клетке осталось "
+                            + Island.getCell(cellID).getPlantList().size());
+                }
+
             }
 
             actualSatiety = Math.min(actualSatiety + Plant.getWeight(), maxSatiety);
@@ -96,7 +105,6 @@ public class Animal extends AbstractAnimal {
         return false;
     }
 
-    // Устраивает
     public void move() {
 
         // Уже делал ходы или скорость = 0
@@ -133,10 +141,10 @@ public class Animal extends AbstractAnimal {
                 directionMethodList.add(this::goUp);
             }
 
-            // Выбор направления
+            // Выбор случайного направления
             int directionID = MyRandom.RANDOM.nextInt(directionMethodList.size());
 
-            //  Движение в случайную клетку
+            //  Движение в выбранное направление
             directionMethodList.get(directionID).run();
 
         }
@@ -144,7 +152,6 @@ public class Animal extends AbstractAnimal {
         isMoved = true;
     }
 
-    // Устраивает
     public void reproduce() {
 
         if (this.isReproduced) {
@@ -220,7 +227,7 @@ public class Animal extends AbstractAnimal {
     }
 
     public void reduceSatiety() {
-        actualSatiety = actualSatiety - maxSatiety * 0.1;
+        actualSatiety = actualSatiety - maxSatiety * 0.15;
     }
 
     private boolean canGoLeft() {
@@ -249,10 +256,14 @@ public class Animal extends AbstractAnimal {
             if (vacantCell.isCrowded(this)) {
                 return;
             }
-        } catch (Exception e) {
-            System.out.println("Походил влево и ошибка");
-            System.out.println("oldCellID -> " + newCellID);
-            System.out.println("newCellID -> " + newCellID);
+        } catch (RuntimeException e) {
+            Logger logger = Logger.getLogger(getClass().getName());
+            logger.info("При попытке походить налево "
+                    + getPicture()
+                    + " не смог походить из клетки #"
+                    + oldCellID
+                    + " в клетку #"
+                    + newCellID);
         }
 
         Island.getCell(newCellID).getPopulationQueue().add(this);
@@ -271,10 +282,14 @@ public class Animal extends AbstractAnimal {
             if (vacantCell.isCrowded(this)) {
                 return;
             }
-        } catch (Exception e) {
-            System.out.println("Походил вправо и ошибка");
-            System.out.println("oldCellID -> " + newCellID);
-            System.out.println("newCellID -> " + newCellID);
+        } catch (RuntimeException e) {
+            Logger logger = Logger.getLogger(getClass().getName());
+            logger.info("При попытке походить направо "
+                    + getPicture()
+                    + " не смог походить из клетки #"
+                    + oldCellID
+                    + " в клетку #"
+                    + newCellID);
         }
 
         Island.getCell(newCellID).getPopulationQueue().add(this);
@@ -293,10 +308,14 @@ public class Animal extends AbstractAnimal {
             if (vacantCell.isCrowded(this)) {
                 return;
             }
-        } catch (Exception e) {
-            System.out.println("Походил вверх и ошибка");
-            System.out.println("oldCellID -> " + newCellID);
-            System.out.println("newCellID -> " + newCellID);
+        } catch (RuntimeException e) {
+            Logger logger = Logger.getLogger(getClass().getName());
+            logger.info("При попытке походить вверх "
+                    + getPicture()
+                    + " не смог походить из клетки #"
+                    + oldCellID
+                    + " в клетку #"
+                    + newCellID);
         }
 
         Island.getCell(newCellID).getPopulationQueue().add(this);
@@ -315,10 +334,14 @@ public class Animal extends AbstractAnimal {
             if (vacantCell.isCrowded(this)) {
                 return;
             }
-        } catch (Exception e) {
-            System.out.println("Походил вниз и ошибка");
-            System.out.println("oldCellID -> " + newCellID);
-            System.out.println("newCellID -> " + newCellID);
+        } catch (RuntimeException e) {
+            Logger logger = Logger.getLogger(getClass().getName());
+            logger.info("При попытке походить вниз "
+                    + getPicture()
+                    + " не смог походить из клетки #"
+                    + oldCellID
+                    + " в клетку #"
+                    + newCellID);
         }
 
         Island.getCell(newCellID).getPopulationQueue().add(this);

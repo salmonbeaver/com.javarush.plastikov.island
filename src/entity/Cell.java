@@ -1,29 +1,25 @@
 package entity;
 
-import entity.herbivore.Caterpillar;
 import lombok.Getter;
 import settings.Data;
 import settings.MyRandom;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CountDownLatch;
 
 public class Cell implements Runnable {
 
-    public CountDownLatch latch;
     private static int cellCount = 0;
     private final int id;
     public static final int MAX_ANIMAL_CAPACITY = Data.getOneCellMaxCapacity();
     public static final int MAX_PLANT_CAPACITY = Plant.getCapacity();
-    private static final Map<Integer, Integer> SPECIFIC_ANIMAL_CAPACITY_MAP = Data.getOneCellCapacityMap(); // ID животного : макс число в клетке
+    private static final Map<Integer, Integer> SPECIFIC_ANIMAL_CAPACITY_MAP = Data.getOneCellCapacityMap(); // ID животного : лимит в клетке
     @Getter
-    private ConcurrentLinkedQueue<Animal> populationQueue = new ConcurrentLinkedQueue<>();
+    private ConcurrentLinkedQueue<Animal> populationQueue = new ConcurrentLinkedQueue<>(); // коллекция всех животных в клетке
     @Getter
-    private List<Plant> plantList = new ArrayList<>();
+    private List<Plant> plantList = new ArrayList<>(); // коллекция всех растений в клетке
     @Getter
     private Map<Integer, Integer> animalCountMap = new HashMap<>(); // Животное : кол-во в клетке
-
 
     public Cell() {
         id = cellCount++;
@@ -32,7 +28,7 @@ public class Cell implements Runnable {
         refreshAnimalCountMap();
     }
 
-    // Стартовое заселение животных
+    // Стартовое заполнение клетки животными
     public void populate() {
 
         for (Map.Entry<Integer, Integer> entry : SPECIFIC_ANIMAL_CAPACITY_MAP.entrySet()) {
@@ -48,6 +44,7 @@ public class Cell implements Runnable {
         }
     }
 
+    // Перепись населения (обновление данных по клетке)
     public void refreshAnimalCountMap() {
 
         for (int i = 0; i < 15; i++) {
@@ -62,6 +59,7 @@ public class Cell implements Runnable {
         }
     }
 
+    // Получение списка ID животных
     public List<Integer> getAnimals() {
         List<Integer> animals = new ArrayList<>();
 
@@ -107,6 +105,7 @@ public class Cell implements Runnable {
         return title + status;
     }
 
+    // Заполнение клетки растениями
     public void fillWithPlants(int plantNumber) {
 
         for (int i = 0; i < plantNumber; i++) {
@@ -115,10 +114,7 @@ public class Cell implements Runnable {
                 return;
             }
 
-            Plant plant = new Plant();
-
-            plant.setCellID(id);
-            plantList.add(plant);
+            plantList.add(new Plant());
         }
     }
 
@@ -145,11 +141,5 @@ public class Cell implements Runnable {
 
             animal.move();
         }
-
-        latch.countDown();
-    }
-
-    public void setCDL(CountDownLatch latch) {
-        this.latch = latch;
     }
 }

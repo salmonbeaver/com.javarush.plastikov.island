@@ -11,12 +11,19 @@ public class Island {
     public static final int HEIGHT = 20;
     public static final int SIZE = WIDTH * HEIGHT;
     private static final List<Cell> CELL_LIST = new ArrayList<>(SIZE);
+    public static final Map<Integer, Integer> ISLAND_ANIMAL_COUNTMAP = new HashMap<>();
 
     public static void init() {
+
+        for (int i = 0; i < 15; i++) {
+            ISLAND_ANIMAL_COUNTMAP.put(i, 0);
+        }
+
         for (int i = 0; i < SIZE; i++) {
             Cell cell = new Cell();
             CELL_LIST.add(cell);
         }
+
     }
 
     public static Cell getCell(int i) {
@@ -25,34 +32,22 @@ public class Island {
 
     // Сводная информация по острову
     public static String getStatus() {
-        int animalCount = 0;
         int plantCount = 0;
+        int animalCount = 0;
 
-        Map<Integer, Integer> islandAnimalCountMap = new HashMap<>();
-
-        // инициализация мапы ID животных как ключей и 0 в кач-ве значения
-        for (int i = 0; i < 15; i++) {
-            islandAnimalCountMap.put(i, 0);
-        }
+        refreshAnimalCountMap();
 
         for (Cell cell : CELL_LIST) {
-
-            cell.refreshAnimalCountMap();
-
-            for (Map.Entry<Integer, Integer> cellEntry : cell.getAnimalCountMap().entrySet()) {
-                int oldValue = islandAnimalCountMap.get(cellEntry.getKey());
-                int newValue = oldValue + cellEntry.getValue();
-                islandAnimalCountMap.put(cellEntry.getKey(), newValue);
-            }
-
-            animalCount = animalCount + cell.getPopulationQueue().size();
             plantCount = plantCount + cell.getPlantList().size();
+            animalCount = animalCount + cell.getPopulationQueue().size();
         }
 
         StringBuilder status = new StringBuilder();
 
-        for (Map.Entry<Integer, Integer> entry : islandAnimalCountMap.entrySet()) {
-            String formattedSpecificAnimalCount = NumberFormat.getInstance(Locale.US).format(entry.getValue());
+        for (Map.Entry<Integer, Integer> entry : ISLAND_ANIMAL_COUNTMAP.entrySet()) {
+
+            int specificAnimalCount = entry.getValue();
+            String formattedSpecificAnimalCount = NumberFormat.getInstance(Locale.US).format(specificAnimalCount);
 
             status.append(Data.getPictureByID(entry.getKey()))
                     .append(" : ")
@@ -60,7 +55,8 @@ public class Island {
                     .append(" | ");
         }
 
-        String formattedMaxPlantCapacity = NumberFormat.getInstance(Locale.US).format((long) Cell.MAX_PLANT_CAPACITY * SIZE);
+        int maxPlantCapacity = Cell.MAX_PLANT_CAPACITY * SIZE;
+        String formattedMaxPlantCapacity = NumberFormat.getInstance(Locale.US).format(maxPlantCapacity);
         String formattedPlantCount = NumberFormat.getInstance(Locale.US).format(plantCount);
 
         status.append("\n")
@@ -70,11 +66,38 @@ public class Island {
                 .append(" / ")
                 .append(formattedMaxPlantCapacity);
 
-        String formattedMaxAnimalCapacity = NumberFormat.getInstance(Locale.US).format((long) Cell.MAX_ANIMAL_CAPACITY * SIZE);
+        int maxAnimalCapacity = Cell.MAX_ANIMAL_CAPACITY * SIZE;
+        String formattedMaxAnimalCapacity = NumberFormat.getInstance(Locale.US).format(maxAnimalCapacity);
         String formattedAnimalCount = NumberFormat.getInstance(Locale.US).format(animalCount);
 
         String title = "Всего животных на острове : " + formattedAnimalCount + " / " + formattedMaxAnimalCapacity + "\n";
 
         return title + status;
+    }
+
+    private static void refreshAnimalCountMap() {
+
+        for (int i = 0; i < 15; i++) {
+            ISLAND_ANIMAL_COUNTMAP.put(i, 0);
+        }
+
+        for (int i = 0; i < Island.SIZE; i++) {
+            Cell cell = Island.getCell(i);
+
+            for (int j = 0; j < 15; j++) {
+                cell.getAnimalCountMap().put(j, 0);
+            }
+
+            for (Animal animal : cell.getPopulationQueue()) {
+                int oldValue = cell.getAnimalCountMap().get(animal.getId());
+                int newValue = oldValue + 1;
+
+                cell.getAnimalCountMap().put(animal.getId(), newValue);
+
+                int islandOldValue = ISLAND_ANIMAL_COUNTMAP.get(animal.getId());
+                int islandNewValue = islandOldValue + 1;
+                ISLAND_ANIMAL_COUNTMAP.put(animal.getId(), islandNewValue);
+            }
+        }
     }
 }

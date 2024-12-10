@@ -1,34 +1,25 @@
-import entity.Island;
 import settings.Data;
 
 import java.util.concurrent.*;
 
 public class Simulation {
-
-    public static final ExecutorService animalLiveService = Executors.newFixedThreadPool(Data.CORES);
+    private static final long DAY_DURATION = 1500;
 
     public static void go(int days) {
 
-        CountDownLatch latch = new CountDownLatch(1);
+        ExecutorService animalLiveService = Executors.newFixedThreadPool(Data.CORES);
+        ScheduledExecutorService newDayService = Executors.newScheduledThreadPool(1);
 
-        try (ScheduledExecutorService newDayService = Executors.newScheduledThreadPool(Data.CORES)) {
+        newDayService.scheduleAtFixedRate(new Sunrise(animalLiveService), 0, DAY_DURATION, TimeUnit.MILLISECONDS);
 
-            for (int i = 0; i < days; i++) {
-
-                newDayService.scheduleAtFixedRate(new Sunrise(latch), 0, 2, TimeUnit.SECONDS);
-
-                try {
-                    latch.await();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-
-                System.out.println("DAY #" + (i + 1));
-                System.out.println(Island.getStatus());
-                System.out.println("-".repeat(210));
-            }
+        try {
+            Thread.sleep(days * DAY_DURATION);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
+        newDayService.shutdown();
         animalLiveService.shutdown();
+
     }
 }

@@ -38,7 +38,6 @@ public class Data {
         matchID.put(Sheep.getID(), Sheep.class);
         matchID.put(Snake.getID(), Snake.class);
         matchID.put(Wolf.getID(), Wolf.class);
-//        matchID.put(Plant.getId(), Plant.class);
 
         weightMap.put(Bear.getID(), 500.0);
         weightMap.put(Boar.getID(), 400.0);
@@ -235,14 +234,6 @@ public class Data {
 
     public static String getPictureByID(int id) {
         return picturesMap.get(id);
-    }
-
-    public static void setActualSatietyMap(int id, double satiety) {
-        actualSatietyMap.put(id, satiety);
-    }
-
-    public static Integer getSpecificCapacity(int id) {
-        return oneCellCapacityMap.get(id);
     }
 
     // Максимальная вместимость 1 клетки
